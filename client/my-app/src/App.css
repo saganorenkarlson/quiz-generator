@@ -1,0 +1,10 @@
+.app-wrapper {
+  margin: 2rem auto 2rem auto;
+  width: 1000px;
+}
+
+@media only screen and (max-width: 1000px) {
+  .app-wrapper {
+    width: 100%;
+  }
+}
