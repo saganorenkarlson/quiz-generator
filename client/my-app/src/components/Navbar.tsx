@@ -3,9 +3,17 @@ import { AppBar, Toolbar,Typography,Button, IconButton, Dialog } from '@mui/mate
 import InfoIcon from '@mui/icons-material/Info';
 import { useTheme } from '@mui/material/styles';
 import '../styles/navbar.css'
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 function Navbar() {
   const theme = useTheme();
+
+  const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
+
+  const handleAuthentication = () => {
+    isAuthenticated ?  logout({ logoutParams: { returnTo: window.location.origin } }) : loginWithRedirect();
+  }
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
@@ -34,6 +42,7 @@ function Navbar() {
   };
 
   return (
+    
     <>
     <AppBar position="static" sx={{ backgroundColor: '#F8F9FB' }}>
         <Toolbar>
@@ -43,7 +52,7 @@ function Navbar() {
           <IconButton  onClick={handleClickOpen} size="large" aria-label="website description">
             <InfoIcon sx={{color: theme.palette.secondary.main}}/>
           </IconButton>
-          <Button size="large" color="inherit" sx={{color: theme.palette.text.primary}}>Login</Button>
+          <Button onClick={handleAuthentication} size="large" color="inherit" sx={{color: theme.palette.text.primary}}>{isAuthenticated ? "Logout" : "Login"}</Button>
         </Toolbar>
       </AppBar>  
       {informationDialog()}

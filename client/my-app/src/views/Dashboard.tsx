@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import '../styles/dashboard.css'
 import CourseList from '../components/CourseList';
 import { DialogNewCourse } from '../components/DialogNewCourse';
@@ -6,9 +6,41 @@ import {Typography} from '@mui/material'
 import { useTheme } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import axios from  "axios";
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 
 export default function Dashboard() {
+
+  const { getAccessTokenSilently } = useAuth0();
+
+  useEffect(()=>{
+
+    const getToken = async () => {
+      const token  = await getAccessTokenSilently();
+      return token;
+    }
+
+    const fetchResult = async () => {
+      const token = await getToken();
+      var options = {
+        method: 'GET',
+        url: 'http://localhost:8000',
+        headers: {authorization: `Bearer ${token}`}
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }
+  
+    fetchResult();
+
+  },[])
+
   const theme = useTheme();
   const [openDialogNewCourse, setOpenDialogNewCourse] = useState<boolean>(false);
 

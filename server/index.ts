@@ -2,16 +2,24 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import path from "path";
 import cors from "cors";
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+dotenv.config();
+
+const checkJwt = auth({
+  audience: process.env.AUTH0_AUDIENCE,
+  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+  tokenSigningAlg: 'RS256',
+});
+
 const mongoose = require('mongoose');
 
-dotenv.config();
 
 const app: Express = express();
 
-app.use(express.json());
+app.use(express.json());  
 app.use(cors());
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', checkJwt, (req: Request, res: Response) => {
   res.send('Hello World From the Typescript Server!')
 });
 
