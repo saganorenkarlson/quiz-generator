@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { QuizListItem } from './QuizListItem';
 import { Accordion, AccordionSummary, AccordionDetails, IconButton, Tooltip } from '@mui/material'
 import { useTheme } from '@mui/material/styles';
 import  ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-
+import {DialogGenerate} from './DialogGenerate';
 
 export default function CourseList() {
     const theme = useTheme();
@@ -59,12 +59,25 @@ export default function CourseList() {
         },
     ]
 
+    const [openDialogGenerate, setOpenDialogGenerate] = useState<boolean>(false);
+
+    const handleClickOpen = () => {
+        setOpenDialogGenerate(true);
+    };
+
+    const handleClose = () => {
+        setOpenDialogGenerate(false);
+    };
+
+    const generateQuestions = (courseMaterial: string, numberOfQuestions: number) => {
+        console.log(courseMaterial, numberOfQuestions);
+    }
 
 
   return (
     <div>
-        {Courses.map((course,index) => (
-        <Accordion sx={{marginBottom: '0.5rem'}}>
+        {Courses.map((course) => (
+        <Accordion key={course.name} sx={{marginBottom: '0.5rem'}}>
             <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -80,17 +93,18 @@ export default function CourseList() {
                 <div className='quiz-header'>
                     <p  className='quiz-text'>Questions</p> 
                     <Tooltip title="Genereate more questions">
-                    <IconButton>
+                    <IconButton onClick={handleClickOpen}>
                         <AddCircleIcon></AddCircleIcon>
                     </IconButton>
                     </Tooltip>
                 </div>
-                {course.quiz.map((quizitem,index) => (
+                {course.quiz.map((quizitem) => (
                 <QuizListItem quizitem={quizitem}/>
                 ))}
             </AccordionDetails>
         </Accordion>
         ))}
+        <DialogGenerate openDialog={openDialogGenerate} handleClose={handleClose} handleSubmit={generateQuestions}></DialogGenerate>
     </div>
   )
 }
