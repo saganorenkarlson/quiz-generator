@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import '../styles/dashboard.css'
-import CourseList from '../components/CourseList';
+import {CourseList} from '../components/CourseList';
 import { DialogNewCourse } from '../components/DialogNewCourse';
 import {Typography} from '@mui/material'
 import { useTheme } from '@mui/material/styles';
@@ -8,12 +8,12 @@ import { IconButton } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from  "axios";
 import { useAuth0 } from "@auth0/auth0-react";
-
-
+import { ICourse, IQuizItem } from '../models/user';
 
 export default function Dashboard() {
 
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, user } = useAuth0();
+  const [courses, setCourses] = useState<ICourse[]>([]);
 
   useEffect(()=>{
 
@@ -22,24 +22,27 @@ export default function Dashboard() {
       return token;
     }
 
-    const fetchResult = async () => {
+     const fetchResult = async () => {
       const token = await getToken();
       var options = {
         method: 'GET',
-        url: 'http://localhost:8000',
-        headers: {authorization: `Bearer ${token}`}
+        url: 'http://localhost:8000/api/users',
+        headers: {authorization: `Bearer ${token}`},
+        params: { userId: user?.sub } 
       };
       
       axios.request(options).then(function (response) {
-        console.log(response.data);
+        setCourses(response.data.courses);
       }).catch(function (error) {
         console.error(error);
       });
     }
   
-    fetchResult();
+    if(user) {
+      fetchResult();
+    }
 
-  },[])
+  },[user, getAccessTokenSilently])
 
   const theme = useTheme();
   const [openDialogNewCourse, setOpenDialogNewCourse] = useState<boolean>(false);
@@ -74,7 +77,7 @@ export default function Dashboard() {
           <AddCircleIcon fontSize='large'></AddCircleIcon>
         </IconButton>
       </div>
-      <CourseList></CourseList>
+      <CourseList courses={courses}></CourseList>
       {addCourseDialog()}
     </div>
   )

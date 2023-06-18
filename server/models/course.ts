@@ -1,5 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
-import QuizItem, { IQuizItem } from './quiz-item';
+import QuizItem, { IQuizItem, QuizItemSchema } from './quiz-item';
 
 
 export interface ICourse extends Document {
@@ -9,8 +9,9 @@ export interface ICourse extends Document {
   
   const CourseSchema: Schema = new Schema({
     name: { type: String, required: true },
-    quiz:  [{ type: Schema.Types.ObjectId, ref: 'QuizItem' }],
+    quiz:  [QuizItemSchema],
   });
   
+  export {CourseSchema};
   export default model<ICourse>("Course", CourseSchema)
   

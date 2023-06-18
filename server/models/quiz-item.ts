@@ -10,4 +10,5 @@ const QuizItemSchema: Schema = new Schema({
   answer: { type: String, required: true },
 });
 
+export { QuizItemSchema}
 export default model<IQuizItem>("QuizItem", QuizItemSchema)

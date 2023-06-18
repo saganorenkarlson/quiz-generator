@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
 import { AppBar, Toolbar,Typography,Button, IconButton, Dialog } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { useTheme } from '@mui/material/styles';
@@ -8,11 +8,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 function Navbar() {
   const theme = useTheme();
-
   const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
 
-  const handleAuthentication = () => {
-    isAuthenticated ?  logout({ logoutParams: { returnTo: window.location.origin } }) : loginWithRedirect();
+  const handleAuthentication = async () => {
+    if (isAuthenticated) {
+      logout({ logoutParams: { returnTo: window.location.origin } });
+    } else {
+      loginWithRedirect();
+    }  
   }
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
