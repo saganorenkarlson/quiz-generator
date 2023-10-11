@@ -15,7 +15,7 @@ export const DialogEdit:React.FC<IDialogEdit> = ({currentQuestion, currentAnswer
   const [answer, setAnswer] = useState<string>(currentAnswer);
 
   const validateSubmit = () => {
-    //check that input is correct
+    //TODO: validate input
     handleSubmit(question,answer);
     handleClose();
   }

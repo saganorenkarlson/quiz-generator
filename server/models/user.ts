@@ -1,16 +1,23 @@
-import { model, Schema, Document } from 'mongoose';
-import Course, { ICourse, CourseSchema } from './course';
-
+import mongoose, { model, Schema, Document } from "mongoose";
+import { ICourse } from "./course";
 
 export interface IUser extends Document {
-    userId: string;
-    courses: ICourse[];
-  }
-  
-  const UserSchema: Schema<IUser> = new Schema<IUser>({
-    userId: { type: String, required: true },
-    courses:  [CourseSchema],
-  });
-  
-  export default model<IUser>("User", UserSchema)
-  
+  userId: string;
+  courses: mongoose.Types.ObjectId[];
+}
+
+const userSchema = new mongoose.Schema({
+    userId: {
+        type: String,
+        required: true,
+    },
+    courses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+    }],
+});
+
+
+const User = mongoose.model('User', userSchema);
+
+export default User;

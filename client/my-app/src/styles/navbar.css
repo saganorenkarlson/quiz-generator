@@ -19,6 +19,10 @@
     padding: 0 1rem;
 }
 
+.navbar-loading-skeleton {
+    margin: 0 12px;
+}
+
 @media only screen and (max-width: 1000px) {
     .information-dialog {
       width: 100%;

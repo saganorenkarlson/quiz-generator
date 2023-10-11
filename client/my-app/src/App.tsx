@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Dashboard from './views/Dashboard'
+import {Dashboard} from './views/Dashboard'
 import Navbar from './components/Navbar';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './styles/theme';
@@ -10,9 +10,9 @@ function App() {
   const { isLoading, isAuthenticated } = useAuth0();
   return (
     <ThemeProvider theme={theme}>
-    <Navbar/>
+    <Navbar loading={isLoading}/>
     <div className="app-wrapper"> 
-    {isLoading ? <div>loading</div> : isAuthenticated ? <Dashboard/> : <div>You need to login to use this website</div>}  
+    { isAuthenticated || isLoading ? <Dashboard/> : <div>You need to login to use this website</div>}  
     </div>
     </ThemeProvider>
   );

@@ -1,10 +1,20 @@
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import path from "path";
-import User, {IUser} from "./models/user"
+import  {IUser} from "./models/user"
 import cors from "cors";
 const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+import { createUser, fetchUser, addCourse, addQuizItemsToCourse, updateQuizItem, deleteQuizItem } from "./controllers/users";
+
+
+// config
 dotenv.config();
+const mongoose = require('mongoose');
+const app: Express = express();
+app.use(express.json());  
+app.use(cors());
+const router = express.Router();
+
 
 const checkJwt = auth({
   audience: process.env.AUTH0_AUDIENCE,
@@ -12,21 +22,18 @@ const checkJwt = auth({
   tokenSigningAlg: 'RS256',
 });
 
-const mongoose = require('mongoose');
+// routes
+router.post("/api/users", checkJwt, createUser);
+router.get("/api/users", checkJwt, fetchUser);
+router.post("/api/courses", checkJwt, addCourse);
+router.put("/api/courses/:courseid", checkJwt, addQuizItemsToCourse);
+router.put("/api/courses/:courseid/:quizitemid", checkJwt, updateQuizItem);
+router.delete("/api/courses/:courseid/:quizitemid", checkJwt, deleteQuizItem);
+//router.post("/api/users/:userid/courses/:courseid/:quizitemid", checkJwt, updateQuizItem);
 
-const app: Express = express();
 
-app.use(express.json());  
-app.use(cors());
-
-import { createUser, fetchUser } from "./controllers/users";
- const router = express.Router();
-
-router.post("/api/users", createUser);
-router.get("/api/users", fetchUser);
 
 app.use(router);
-
 app.get('/', checkJwt, (req: Request, res: Response) => {
   res.send('Hello World From the Typescript Server!')
 });

@@ -12,40 +12,36 @@ const Callback = () => {
   useEffect(() => {
 
     const getToken = async () => {
-      const token  = await getAccessTokenSilently();
+      const token = await getAccessTokenSilently();
       return token;
     }
 
     const signUp = async () => {
-    const token = await getToken();
-    const userId = user ? user.sub : null;
-    const createUserOptions = {
-              method: 'POST',
-              url: 'http://localhost:8000/api/users',
-              data: { userId: userId },
-              headers: { authorization: `Bearer ${token}` },
-
-            };
-            axios
-              .request(createUserOptions)
-              .then(function (createUserResponse) {
-                navigate('/');
-              })
-              .catch(function (error) {
-                console.error(error);
-              });
+      const token = await getToken();
+      const createUserOptions = {
+        method: 'POST',
+        url: 'http://localhost:8000/api/users',
+        headers: { authorization: `Bearer ${token}` },
+      };
+      axios
+        .request(createUserOptions)
+        .then(function (createUserResponse) {
+          navigate('/');
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
 
     }
 
-    if(user) {
+    if (user) {
       signUp();
     }
 
   }, [user]);
 
   return (
-    <div>
-      Loging you in
+    <div className='callback-page'>
     </div>
   );
 };

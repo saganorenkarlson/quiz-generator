@@ -1,81 +1,198 @@
-.dashboard{
-    margin: 0 1rem 0 1rem;
+.dashboard {
+  margin: 0 1rem 0 1rem;
 }
 
 .dashboard-upper-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .quiz-item {
-    height: 2rem;
-    padding: 0.2rem;
-    padding-right: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  height: 2rem;
+  padding: 0.2rem;
+  padding-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .quiz-item:hover {
-    background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .quiz-text {
-    margin: 0 0.8rem;
-    text-overflow: ellipsis;
-    flex-grow: 1;
-    overflow: hidden;
-    white-space: nowrap;
-
+  margin: 0 0.8rem;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.quiz-item-buttons{
-    display: flex;
+.quiz-item-buttons {
+  display: flex;
 }
 
 .quiz-header {
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-right: 1rem;
-    font-weight: 500;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 1rem;
+  font-weight: 500;
 }
 
 .course-name {
-    margin:0;
-    margin-right: 1rem;
-    color: black;
-    font-weight: 400;
-    font-size: 1.5rem;
+  margin: 0;
+  margin-right: 1rem;
+  color: black;
+  font-weight: 400;
+  font-size: 1.5rem;
 }
 
 .css-o4b71y-MuiAccordionSummary-content {
-    align-items: center;
+  align-items: center;
 }
 
 .css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
-    margin: 12px 0;
+  margin: 12px 0;
 }
 
+.course-dialog p {
+  padding: 0 10px;
+}
 
 .course-dialog-title {
-    height: 2rem;
-    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.5rem;
-    color: #485A6C;
-    font-weight: 400;
-    text-align: center;
+  height: 2rem;
+  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  color: #485a6c;
+  font-weight: 400;
+  text-align: center;
 }
 
 .course-dialog-content {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.loading-skeleton {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 8px;
+  justify-content: space-between;
+}
+
+.course-loading-skeleton {
+  margin-bottom: 8px;
+}
+
+.add-course-loading-skeleton {
+  margin: 15px;
+}
+
+.card-container {
+  perspective: 1000px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: unset;
+}
+
+.card {
+  width: 800px;
+  height: 330px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  position: absolute;
+  transform: rotateY(0deg);
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .card {
+    width: calc(100% - 64px);
+  }
+}
+
+.css-11lmrbq-MuiPaper-root-MuiDialog-paper {
+  background-color: unset;
+}
+
+.card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  padding: 16px;
+  position: absolute;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+}
+
+
+.course-name-dialog.is-unflipped {
+  transform: rotateY(180deg);
+  right: 16px;
+  position: absolute;
+}
+
+.course-name-dialog {
+  position: absolute;
+  left: 16px;
+  z-index: 10;
+  color: black;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+
+.card-face.front {
+  background: #ffffff;
+  z-index: 2;
+}
+
+.card-face.back {
+  background: #f5f5f5;
+  transform: rotateY(180deg);
+}
+
+.quiz-navigation {
+  width: 800px;
+  position: relative;
+  top: 200px;
+  display: flex;
+  justify-content: center;
+  color: black;
+}
+
+.quiz-navigation-text {
+  padding-bottom: 4px;
+}
+
+.card-text-info {
+  position: absolute;
+  top: 260px;
+  color: #ccc;
+}
+
+.card.flipping {
+  visibility: hidden;
 }
