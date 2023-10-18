@@ -2,6 +2,13 @@ import User, { IUser } from "../models/user"
 import Course, { ICourse } from "../models/course"
 import { Request, Response } from 'express'
 import { IQuizItem } from "../models/quiz-item";
+import OpenAI from 'openai';
+import dotenv from "dotenv";
+dotenv.config();
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 export const createUser = async (req: Request, res: Response) => {
   const userId = req.auth?.payload.sub;
@@ -37,9 +44,20 @@ export const fetchUser = async (req: Request, res: Response) => {
 
 export const addCourse = async (req: Request, res: Response) => {
   const userId = req.auth?.payload.sub;
+  const courseName = req.body.name;
+  const courseMaterial = req.body.courseMaterial;
+  const numberOfQuestions = req.body.numberOfQuestions;
+  const prompt = `From the following material generate ${numberOfQuestions} questions with answers to help studying the material. Give it in this format: [{"question": "question here", "answer": "answer here"}, {"question": "another question", "answer": "another answer"}]. Material: ${courseMaterial}`;
 
   try {
-    const course: ICourse = new Course(req.body);
+    const chatCompletion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ "role": "user", "content": prompt }],
+    });
+
+    const course: ICourse = new Course({name: courseName});
+    if (chatCompletion.choices[0].message.content) course.quiz = JSON.parse(chatCompletion.choices[0].message.content);
+
     await course.save();
     const user = await User.findOne({ userId: userId }).exec();
     if (!user) {
@@ -50,23 +68,29 @@ export const addCourse = async (req: Request, res: Response) => {
 
     res.status(201).send(course);
   } catch (error) {
+    console.log(error)
     res.status(400).send(error);
   }
 };
 
 export const addQuizItemsToCourse = async (req: Request, res: Response) => {
   const courseId = req.params.courseid;
+  const courseMaterial = req.body.courseMaterial;
+  const numberOfQuestions = req.body.numberOfQuestions;
+  const prompt = `From the following material generate ${numberOfQuestions} questions with answers to help studying the material. Give it in this format: [{"question": "question here", "answer": "answer here"}, {"question": "another question", "answer": "another answer"}]. Material: ${courseMaterial}`;
+
   try {
     const course = await Course.findById(courseId).exec();
     if (!course) {
       return res.status(404).send({ error: 'Course not found' });
     }
 
-    const questions: IQuizItem[] = req.body;
-    questions.forEach(question => {
-      course.quiz.push(question);
+    const chatCompletion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ "role": "user", "content": prompt }],
     });
 
+    if (chatCompletion.choices[0].message.content) course.quiz.push(...JSON.parse(chatCompletion.choices[0].message.content));
     await course.save();
     res.status(200).send(course);
   } catch (error) {

@@ -1,9 +1,7 @@
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
-import path from "path";
-import  {IUser} from "./models/user"
 import cors from "cors";
-const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+const { auth } = require('express-oauth2-jwt-bearer');
 import { createUser, fetchUser, addCourse, addQuizItemsToCourse, updateQuizItem, deleteQuizItem } from "./controllers/users";
 
 

@@ -196,3 +196,9 @@
 .card.flipping {
   visibility: hidden;
 }
+
+.backdrop-loading-quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

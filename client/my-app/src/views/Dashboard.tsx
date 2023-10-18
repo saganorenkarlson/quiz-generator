@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react'
 import '../styles/dashboard.css'
 import { CourseList } from '../components/CourseList';
 import { DialogNewCourse } from '../components/DialogNewCourse';
-import { Typography } from '@mui/material'
-import { useTheme } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
+import { IconButton, Backdrop, CircularProgress, Typography, useTheme } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -17,6 +15,7 @@ export const Dashboard = () => {
   const { getAccessTokenSilently, user } = useAuth0();
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [loadingCourses, setLoadingCourses] = useState<boolean>(true);
+  const [generatingQuestions, setGeneratingQuestions] = useState(false);
 
   const getToken = async () => {
     const token = await getAccessTokenSilently();
@@ -51,7 +50,7 @@ export const Dashboard = () => {
       signUp();
     }
 
-  }, [user]);
+  }, );
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -76,7 +75,7 @@ export const Dashboard = () => {
       fetchResult();
     }
 
-  }, [user, getAccessTokenSilently])
+  },)
 
   const theme = useTheme();
   const [openDialogNewCourse, setOpenDialogNewCourse] = useState<boolean>(false);
@@ -90,21 +89,23 @@ export const Dashboard = () => {
   };
 
   const addCourse = async (courseName: string, courseMaterial: string, numberOfQuestions: number) => {
+    setGeneratingQuestions(true);
     const token = await getToken();
-    const course = { name: courseName, quiz: [] };
+    const data = { name: courseName, courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions };
 
     var options = {
       method: 'POST',
       url: `http://localhost:8000/api/courses`,
       headers: { authorization: `Bearer ${token}` },
-      data: course,
+      data: data,
     };
 
     axios.request(options).then(function (response) {
       const newCourse = response.data;
       setCourses(prevCourses => [...prevCourses, newCourse]);
-
+      setGeneratingQuestions(false);
     }).catch(function (error) {
+      setGeneratingQuestions(false);
       console.error(error.response.data);
     });
 
@@ -113,35 +114,25 @@ export const Dashboard = () => {
 
 
   const generateQuestions = async (course: ICourse | null, courseMaterial: string, numberOfQuestions: number) => {
+    setGeneratingQuestions(true);
+
     const token = await getToken();
     if (!course) return;
-
-    const quizItems = [
-      {
-        question: "What is the capital of Sweden?",
-        answer: "Stockholm"
-      },
-      {
-        question: "What is the capital of Sweden?",
-        answer: "Stockholm"
-      },
-      {
-        question: "What is the capital of Sweden?",
-        answer: "Stockholm"
-      }
-    ]
+    const data = { courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions };
 
     var options = {
       method: 'PUT',
       url: `http://localhost:8000/api/courses/${course._id}`,
       headers: { authorization: `Bearer ${token}` },
-      data: quizItems,
+      data: data,
     };
 
     axios.request(options).then(function (response) {
       const updatedCourse = response.data;
       setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
+      setGeneratingQuestions(false);
     }).catch(function (error) {
+      setGeneratingQuestions(false);
       console.error(error.response.data);
     });
 
@@ -219,6 +210,15 @@ export const Dashboard = () => {
           </div>
         </>
       )}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={generatingQuestions}
+      >
+        <div className="backdrop-loading-quiz">
+          <CircularProgress color="inherit" />
+          <p>Generating quiz...</p>
+        </div>
+      </Backdrop>
     </div>
   )
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Dialog, DialogActions, Button, IconButton } from '@mui/material'
+import { Dialog, IconButton } from '@mui/material'
 import { ICourse } from '../models/user'
 import '../styles/dashboard.css'
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
