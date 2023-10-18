@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import '../styles/dashboard.css'
 import { CourseList } from '../components/CourseList';
 import { DialogNewCourse } from '../components/DialogNewCourse';
-import { IconButton, Backdrop, CircularProgress, Typography, useTheme } from '@mui/material';
+import { IconButton, Backdrop, CircularProgress, Typography, useTheme, Snackbar, Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -16,6 +16,7 @@ export const Dashboard = () => {
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [loadingCourses, setLoadingCourses] = useState<boolean>(true);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
+  const [snackbarInfo, setSnackbarInfo] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
   const getToken = async () => {
     const token = await getAccessTokenSilently();
@@ -50,7 +51,7 @@ export const Dashboard = () => {
       signUp();
     }
 
-  }, );
+  },);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -71,7 +72,6 @@ export const Dashboard = () => {
     }
 
     if (user) {
-      console.log("in user")
       fetchResult();
     }
 
@@ -104,9 +104,10 @@ export const Dashboard = () => {
       const newCourse = response.data;
       setCourses(prevCourses => [...prevCourses, newCourse]);
       setGeneratingQuestions(false);
+      setSnackbarInfo({ message: "Course added successfully", type: 'success' });
     }).catch(function (error) {
       setGeneratingQuestions(false);
-      console.error(error.response.data);
+      setSnackbarInfo({ message: 'Error adding course!', type: 'error' });
     });
 
     handleClose();
@@ -131,9 +132,10 @@ export const Dashboard = () => {
       const updatedCourse = response.data;
       setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
       setGeneratingQuestions(false);
+      setSnackbarInfo({ message: "Questions generated successfully", type: 'success' });
     }).catch(function (error) {
       setGeneratingQuestions(false);
-      console.error(error.response.data);
+      setSnackbarInfo({ message: 'Error generating questions!', type: 'error' });
     });
 
   }
@@ -153,14 +155,15 @@ export const Dashboard = () => {
       const updatedCourse = response.data;
       setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
     }).catch(function (error) {
-      console.error(error.response.data);
+      setSnackbarInfo({ message: 'Error editing questions!', type: 'error' });
     });
 
   }
 
   const deleteQuestion = async (quizItem: IQuizItem, courseId: string) => {
+    console.log("before token")
     const token = await getToken();
-
+    console.log("after token")
     var options = {
       method: 'DELETE',
       url: `http://localhost:8000/api/courses/${courseId}/${quizItem._id}`,
@@ -169,9 +172,10 @@ export const Dashboard = () => {
 
     axios.request(options).then(function (response) {
       const updatedCourse = response.data;
+      console.log()
       setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
     }).catch(function (error) {
-      console.error(error.response.data);
+      setSnackbarInfo({ message: 'Error deleting question!', type: 'error' });
     });
   }
 
@@ -219,6 +223,15 @@ export const Dashboard = () => {
           <p>Generating quiz...</p>
         </div>
       </Backdrop>
+      <Snackbar
+        open={snackbarInfo !== null}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarInfo(null)}
+      >
+        <Alert onClose={() => setSnackbarInfo(null)} severity={snackbarInfo?.type} sx={{ width: '100%' }}>
+          {snackbarInfo?.message}
+        </Alert>
+      </Snackbar>
     </div>
   )
 

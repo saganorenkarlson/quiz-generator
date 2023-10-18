@@ -134,7 +134,7 @@ export const deleteQuizItem = async (req: Request, res: Response) => {
       return res.status(404).send({ error: 'Course not found' });
     }
 
-    const newQuiz = course.quiz.toObject().filter((item: IQuizItem) => { console.log("item", item, "quizItemId", quizItemId); return !item._id.equals(quizItemId); });
+    const newQuiz = course.quiz.toObject().filter((item: IQuizItem) => !item._id.equals(quizItemId));
     course.quiz = newQuiz;
 
     await course.save();

@@ -40,7 +40,7 @@ export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuest
                                 <PlayCircleIcon sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircleIcon>
                             </IconButton>
                         </AccordionSummary>
-                        <AccordionDetails sx={{ padding: '0', backgroundColor: '#F8F9FB' }}>
+                        <AccordionDetails sx={{ padding: '0 0 16px 0', backgroundColor: '#F8F9FB' }}>
                             <div className='quiz-header'>
                                 <p className='quiz-text'>Questions</p>
                                 <Tooltip title="Genereate more questions">
