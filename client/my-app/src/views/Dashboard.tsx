@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import '../styles/dashboard.css'
 import { CourseList } from '../components/CourseList';
 import { DialogNewCourse } from '../components/DialogNewCourse';
@@ -18,17 +18,12 @@ export const Dashboard = () => {
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
   const [snackbarInfo, setSnackbarInfo] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
-  const getToken = async () => {
+  const getToken = useCallback(async () => {
     const token = await getAccessTokenSilently();
     return token;
-  }
+  }, [getAccessTokenSilently]);
 
   useEffect(() => {
-
-    const getToken = async () => {
-      const token = await getAccessTokenSilently();
-      return token;
-    }
 
     const signUp = async () => {
       const token = await getToken();
@@ -51,7 +46,7 @@ export const Dashboard = () => {
       signUp();
     }
 
-  },);
+  },[user,getToken]);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -75,7 +70,7 @@ export const Dashboard = () => {
       fetchResult();
     }
 
-  },)
+  },[user, getToken]);
 
   const theme = useTheme();
   const [openDialogNewCourse, setOpenDialogNewCourse] = useState<boolean>(false);
@@ -91,7 +86,7 @@ export const Dashboard = () => {
   const addCourse = async (courseName: string, courseMaterial: string, numberOfQuestions: number) => {
     setGeneratingQuestions(true);
     const token = await getToken();
-    const data = { name: courseName, courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions };
+    const data = { name: courseName, courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions, userName: user?.nickname };
 
     var options = {
       method: 'POST',
@@ -161,9 +156,7 @@ export const Dashboard = () => {
   }
 
   const deleteQuestion = async (quizItem: IQuizItem, courseId: string) => {
-    console.log("before token")
     const token = await getToken();
-    console.log("after token")
     var options = {
       method: 'DELETE',
       url: `http://localhost:8000/api/courses/${courseId}/${quizItem._id}`,
@@ -172,10 +165,26 @@ export const Dashboard = () => {
 
     axios.request(options).then(function (response) {
       const updatedCourse = response.data;
-      console.log()
       setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
     }).catch(function (error) {
       setSnackbarInfo({ message: 'Error deleting question!', type: 'error' });
+    });
+  }
+
+  const updatePublicValue = async (newPublicValue: boolean, courseId: string) => {
+    const token = await getToken();
+    var options = {
+      method: 'PUT',
+      url: `http://localhost:8000/api/courses/${courseId}/public`,
+      headers: { authorization: `Bearer ${token}` },
+      data: { isPublic: newPublicValue },
+    };
+
+    axios.request(options).then(function (response) {
+      const updatedCourse = response.data;
+      setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
+    }).catch(function (error) {
+      setSnackbarInfo({ message: 'Error editing questions!', type: 'error' });
     });
   }
 
@@ -200,12 +209,18 @@ export const Dashboard = () => {
             </IconButton>
           </div>
           <div>
-            <CourseList
+            {courses.length > 0 ? <CourseList
               generateQuestions={generateQuestions}
               editQuestion={editQuestion}
               deleteQuestion={deleteQuestion}
+              updatePublicValue={updatePublicValue}
               courses={courses}
-            />
+            /> :
+              <p className="course-list-info">
+                You haven't added any courses yet. Add one with the button to the right.
+              </p>
+            }
+
             <DialogNewCourse
               openDialog={openDialogNewCourse}
               handleClose={handleClose}

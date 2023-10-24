@@ -1,12 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
-import Callback from './components/Callback';
-
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -23,12 +20,7 @@ root.render(
         scope: "openid profile email"
       }}
     >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/callback" element={<Callback />} />
-          <Route path="/" element={<App />} />
-        </Routes>
-      </BrowserRouter>
+      <App />
     </Auth0Provider>
   </React.StrictMode>
 );

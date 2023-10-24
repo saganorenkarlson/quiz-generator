@@ -2,6 +2,8 @@ export interface ICourse {
     _id: string;
     name: string;
     quiz: IQuizItem[];
+    createdBy: {username: string, id: string};
+    public: boolean;
   }
   
   export interface IQuizItem {

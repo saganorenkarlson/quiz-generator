@@ -1,31 +1,54 @@
 .information-dialog-title {
-    background-color: #F9C069;
-    height: 2rem;
-    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    font-size: 1.5rem;
-    color: white;
-    font-weight: 400;
-    text-align: center;
+  background-color: #f9c069;
+  height: 2rem;
+  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 400;
+  text-align: center;
 }
 
-.information-dialog{
-    width: 35rem;
+.information-dialog {
+  width: 35rem;
 }
 
 .information-dialog-text {
-    padding: 0 1rem;
+  padding: 0 1rem;
 }
 
 .navbar-loading-skeleton {
-    margin: 0 12px;
+  margin: 0 12px;
+}
+
+.navbar-title-short {
+  display: none;
+  margin-right: 1rem;
+}
+
+@media (min-width: 610px) {
+  .navbar-title-full {
+    display: inline;
+  }
+  .navbar-title-short {
+    display: none;
+  }
+}
+
+@media (max-width: 609px) {
+  .navbar-title-full {
+    display: none;
+  }
+  .navbar-title-short {
+    display: inline;
+  }
 }
 
 @media only screen and (max-width: 1000px) {
-    .information-dialog {
-      width: 100%;
-      height: auto;
-    }
+  .information-dialog {
+    width: 100%;
+    height: auto;
   }
+}
