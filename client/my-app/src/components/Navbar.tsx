@@ -23,7 +23,7 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate(`/search?query=${query}&page=1`);
+    navigate(`/search?query=${query}&page=1&filter=course`);
   }
 
   const handleAuthentication = async () => {
@@ -33,7 +33,6 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
       loginWithRedirect();
     }
   }
-
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -60,7 +59,6 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
   };
 
   return (
-
     <>
       <AppBar position="static" sx={{ backgroundColor: '#F8F9FB' }}>
         <Toolbar>

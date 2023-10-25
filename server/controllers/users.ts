@@ -171,24 +171,26 @@ export const updateCoursePublicStatus = async (req: Request, res: Response) => {
 };
 
 export const searchCourses = async (req: Request, res: Response) => {
-  const { term, page = 1, pageSize = 10 } = req.query;
+  console.log("in search")
+  const { term, page = 1, pageSize = 10, filter = 'course' } = req.query;
 
-  if (!term) {
-    return res.status(400).json({ error: 'Search term is required' });
-  }
-
+  // if (!term) {
+  //   return res.status(400).json({ error: 'Search term is required' });
+  // }
+console.log("ternm",term)
   const skip = (Number(page) - 1) * Number(pageSize);
   const limit = Number(pageSize);
+  const searchCriteria = filter === 'course' ? { name: new RegExp(term as string, 'i') } : { ['createdBy.username']: new RegExp(term as string, 'i') };
 
   try {
     const [courses, total] = await Promise.all([
-      Course.find({ name: new RegExp(term as string, 'i') })
+      Course.find(searchCriteria)
         .skip(skip)
         .limit(limit)
         .exec(),
-      Course.countDocuments({ name: new RegExp(term as string, 'i') }),
+      Course.countDocuments(searchCriteria),
     ]);
-
+    console.log(courses)
     return res.status(200).json({courses, totalPages: Math.ceil(total / limit) });
   } catch (error) {
     console.error(error);

@@ -29,3 +29,17 @@
     display: flex;
     align-items: flex-end;
 }
+
+.MuiButtonBase-root.css-re27iz-MuiButtonBase-root-MuiToggleButton-root {
+    font-size: 0.7rem;
+    line-height: 1.1;
+}
+
+.filter-wrapper {
+    display: flex;
+    color: #485A6C;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-self: end;
+}
