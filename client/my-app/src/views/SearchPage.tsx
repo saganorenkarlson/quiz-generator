@@ -109,6 +109,7 @@ export const SearchPage = () => {
 
     return (
         <div className='search-page-wrapper'>
+            <Typography className="search-page-title" fontWeight={600} fontSize={'28px'}>Showing results for <i>{queryFromUrl}</i></Typography>
             <form className='search-form' onSubmit={handleSearch}>
                 <TextField
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,13 +170,15 @@ export const SearchPage = () => {
                                         <Typography className="created-by-content" fontSize={12}><Person fontSize='small' />{course.createdBy.username} </Typography>
                                     </div>
                                     {isAuthenticated ?
-                                        <Tooltip title="Add quiz to your list">
-                                            <>
-                                                {currentCourses?.find((course_) => course.name === course_.name) ? <IconButton disabled> <PlaylistAddCheck />
-                                                </IconButton> : <IconButton onClick={() => addCourse(course._id)}> <PlaylistAdd /></IconButton>
-                                                }
-                                            </>
-                                        </Tooltip> : null}
+                                        (currentCourses?.find((course_) => course.name === course_.name) ? <IconButton disabled> <PlaylistAddCheck />
+                                        </IconButton> :
+                                            <Tooltip title="Add course to your list">
+                                                <IconButton onClick={() => addCourse(course._id)}>
+                                                    <PlaylistAdd />
+                                                </IconButton>
+                                            </Tooltip>
+                                        )
+                                        : null}
                                 </div>
                             </AccordionSummary>
                         </Accordion>)}

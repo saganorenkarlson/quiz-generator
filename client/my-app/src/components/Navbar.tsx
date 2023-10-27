@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { AppBar, Toolbar, Typography, Button, IconButton, Dialog, InputAdornment, TextField } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Dialog, InputAdornment, TextField } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import InfoIcon from '@mui/icons-material/Info';
+import ListIcon from '@mui/icons-material/List';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout'
 import { useTheme } from '@mui/material/styles';
 import '../styles/navbar.css'
 import { useAuth0 } from "@auth0/auth0-react";
@@ -90,10 +93,27 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
                   }}
                 />
               </form>}
-              <IconButton onClick={handleClickOpen} size="large" aria-label="website description">
-                <InfoIcon sx={{ color: theme.palette.secondary.main }} />
-              </IconButton>
-              <Button onClick={handleAuthentication} size="large" color="inherit" sx={{ color: theme.palette.text.primary }}>{isAuthenticated ? "Logout" : "Login"}</Button>
+              <div className="navbar-options-wrapper">
+                <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px' }} onClick={()=> navigate('/')} size="large" aria-label="website description">
+                  <ListIcon fontSize='small'/>
+                  <span className="navbar-option-text">MY COURSES</span>
+                </IconButton>
+                <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px' }} onClick={handleClickOpen} size="large" aria-label="website description">
+                  <InfoIcon fontSize='small' sx={{ color: theme.palette.secondary.main }} />
+                  <span className="navbar-option-text">INFO</span>
+                </IconButton>
+                <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px' }} onClick={handleAuthentication} size="large" aria-label="website description">
+                  {isAuthenticated ?
+                    <>
+                      <LogoutIcon fontSize='small' />
+                      <span className="navbar-option-text">LOGOUT</span>
+                    </> :
+                    <>
+                      <LoginIcon fontSize='small'/>
+                      <span className="navbar-option-text">LOGIN</span>
+                    </>}
+                </IconButton>
+              </div>
             </>}
         </Toolbar>
       </AppBar >

@@ -6,6 +6,10 @@
   margin: 0 1rem;
 }
 
+.search-page-title {
+  align-self: flex-start;
+}
+
 .search-form {
   margin: 2rem 0;
   width: 100%;
