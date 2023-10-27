@@ -213,7 +213,7 @@ export const Dashboard = () => {
             <Typography variant="h5" component="h1" sx={{ color: theme.palette.text.primary }}>
               Courses
             </Typography>
-            <IconButton onClick={handleClickOpen} size="large" sx={{ color: theme.palette.text.secondary }}>
+            <IconButton aria-label='Create course' onClick={handleClickOpen} size="large" sx={{ color: theme.palette.text.secondary }}>
               <AddCircleIcon fontSize='large'></AddCircleIcon>
             </IconButton>
           </div>

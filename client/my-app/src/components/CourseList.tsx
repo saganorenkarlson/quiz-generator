@@ -45,7 +45,7 @@ export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuest
                 >
                     <div className="accordion-block">
                         <h3 className="course-name">{course.name}</h3>
-                        <IconButton sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
+                        <IconButton aria-label='Play quiz' sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
                             <PlayCircleIcon sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircleIcon>
                         </IconButton>
                     </div>
@@ -59,30 +59,31 @@ export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuest
                     <p className='course-settings-text'>Settings</p>
                     <div className='course-settings'>
                         <div className="visibility-wrapper">
-                        <p className="course-setting-visibility-text">Visibility: </p> <ToggleButtonGroup
-                        className='visibility-button'
-                            value={course.public ? 'public' : 'private'}
-                            exclusive
-                            onChange={(_event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => handlePublicValueChange(_event, value, course._id)}
-                            size='small'
-                        >
-                            <ToggleButton value="private">
-                                Private
-                            </ToggleButton>
-                            <ToggleButton value="public">
-                                Public
-                            </ToggleButton>
-                        </ToggleButtonGroup>
+                            <p className="course-setting-visibility-text">Visibility: </p> <ToggleButtonGroup
+                                className='visibility-button'
+                                aria-label="Change course visibility"
+                                value={course.public ? 'public' : 'private'}
+                                exclusive
+                                onChange={(_event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => handlePublicValueChange(_event, value, course._id)}
+                                size='small'
+                            >
+                                <ToggleButton value="private" aria-pressed={course.public === false}>
+                                    Private
+                                </ToggleButton>
+                                <ToggleButton value="public" aria-pressed={course.public === true}>
+                                    Public
+                                </ToggleButton>
+                            </ToggleButtonGroup>
                         </div>
-                        <IconButton onClick={() => course.createdBy.id === userId ? deleteCourse(course._id) : removeCourseFromList(course._id)} className="delete-button"sx={{backgroundColor: 'none', borderRadius: '4px', border:'solid #e1e4e9 1px', height: '28px'}}>
-                            {course.createdBy.id === userId ? <> <Delete sx={{width: '1rem', height: '1rem'}}/> <span className="delete-button-text">DELETE COURSE </span>  </>: <><PlaylistRemove /> <span className="delete-button-text">REMOVE FROM LIST</span> </>}
+                        <IconButton aria-label="Delete course" onClick={() => course.createdBy.id === userId ? deleteCourse(course._id) : removeCourseFromList(course._id)} className="delete-button" sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '28px' }}>
+                            {course.createdBy.id === userId ? <> <Delete sx={{ width: '1rem', height: '1rem' }} /> <span className="delete-button-text">DELETE COURSE </span>  </> : <><PlaylistRemove /> <span className="delete-button-text">REMOVE FROM LIST</span> </>}
                         </IconButton>
                     </div>
-                    <hr className='course-hr'/>
+                    <hr className='course-hr' />
                     <div className='quiz-header'>
                         <p className='quiz-text'>Questions</p>
                         <Tooltip title="Generate more questions">
-                            <IconButton onClick={() => { setOpenDialogGenerate(true); setSelectedCourse(course) }}>
+                            <IconButton aria-label="Generate more questions for the course" onClick={() => { setOpenDialogGenerate(true); setSelectedCourse(course) }}>
                                 <AddCircleIcon></AddCircleIcon>
                             </IconButton>
                         </Tooltip>

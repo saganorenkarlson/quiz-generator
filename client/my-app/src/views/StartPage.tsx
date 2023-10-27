@@ -25,6 +25,10 @@ export const StartPage = () => {
                     }}
                     placeholder={'Search course or user'}
                     size='medium'
+                    type='text'
+                    inputProps={{
+                        'aria-label': 'Search course or user'
+                      }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">

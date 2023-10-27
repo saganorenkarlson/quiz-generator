@@ -24,10 +24,10 @@ export const QuizListItem: React.FC<IQuizListItem> = ({ quizitem, editQuestion, 
     <div className='quiz-item'>
       <p className="quiz-text">{quizitem.question}</p>
       <div className='quiz-item-buttons'>
-        <IconButton onClick={() => setOpenDialogEdit(true)}>
+        <IconButton aria-label="Edit quiz item" onClick={() => setOpenDialogEdit(true)}>
           <ModeEditIcon fontSize='small'></ModeEditIcon>
         </IconButton>
-        <IconButton onClick={() => setOpenDialogDelete(true)}>
+        <IconButton aria-label="Delete quiz item" onClick={() => setOpenDialogDelete(true)}>
           <DeleteIcon fontSize='small' ></DeleteIcon>
         </IconButton>
       </div>
@@ -35,12 +35,14 @@ export const QuizListItem: React.FC<IQuizListItem> = ({ quizitem, editQuestion, 
       <Dialog
         open={(openDialogDelete)} onClose={() => setOpenDialogDelete(false)}
         fullWidth
-        maxWidth="sm">
+        maxWidth="sm"
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description">
         <div className='course-dialog'>
-          <div className="course-dialog-title">
+          <div id="delete-dialog-title" className="course-dialog-title">
             Delete quiz item
           </div>
-          <p>Are you sure you want to delete this quiz item?</p>
+          <p id="delete-dialog-description">Are you sure you want to delete this quiz item?</p>
           <div className='course-dialog-content'>
             <DialogActions>
               <Button onClick={() => setOpenDialogDelete(false)}>No</Button>

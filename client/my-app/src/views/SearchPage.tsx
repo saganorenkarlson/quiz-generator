@@ -112,9 +112,13 @@ export const SearchPage = () => {
             <Typography className="search-page-title" fontWeight={600} fontSize={'28px'}>Showing results for <i>{queryFromUrl}</i></Typography>
             <form className='search-form' onSubmit={handleSearch}>
                 <TextField
+                    type="text"
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         setQuery(event.target.value);
                     }}
+                    inputProps={{
+                        'aria-label': 'Search course or user'
+                      }}
                     placeholder={queryFromUrl || 'Search course or user'}
                     defaultValue={queryFromUrl}
                     size='small'
@@ -161,7 +165,7 @@ export const SearchPage = () => {
                             >
                                 <div className="accordion-block">
                                     <h3 className="course-name">{course.name}</h3>
-                                    <IconButton sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
+                                    <IconButton aria-label='Play quiz' sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
                                         <PlayCircle sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircle>
                                     </IconButton>
                                 </div>
@@ -173,7 +177,7 @@ export const SearchPage = () => {
                                         (currentCourses?.find((course_) => course.name === course_.name) ? <IconButton disabled> <PlaylistAddCheck />
                                         </IconButton> :
                                             <Tooltip title="Add course to your list">
-                                                <IconButton onClick={() => addCourse(course._id)}>
+                                                <IconButton aria-label='Add course to list' onClick={() => addCourse(course._id)}>
                                                     <PlaylistAdd />
                                                 </IconButton>
                                             </Tooltip>

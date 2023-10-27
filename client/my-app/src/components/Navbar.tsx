@@ -84,6 +84,10 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
                   placeholder="Search course or user"
                   size='small'
                   sx={{ marginRight: "12px" }}
+                  type='text'
+                  inputProps={{
+                    'aria-label': 'Search course or user'
+                  }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
