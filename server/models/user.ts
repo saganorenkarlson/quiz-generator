@@ -1,5 +1,4 @@
-import mongoose, { model, Schema, Document } from "mongoose";
-import { ICourse } from "./course";
+import mongoose, { Document } from "mongoose";
 
 export interface IUser extends Document {
   userId: string;

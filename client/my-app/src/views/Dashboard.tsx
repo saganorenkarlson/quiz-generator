@@ -17,36 +17,12 @@ export const Dashboard = () => {
   const [loadingCourses, setLoadingCourses] = useState<boolean>(true);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
   const [snackbarInfo, setSnackbarInfo] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+  const [userId, setUserId] = useState<string>('');
 
   const getToken = useCallback(async () => {
     const token = await getAccessTokenSilently();
     return token;
   }, [getAccessTokenSilently]);
-
-  useEffect(() => {
-
-    const signUp = async () => {
-      const token = await getToken();
-      const createUserOptions = {
-        method: 'POST',
-        url: 'http://localhost:8000/api/users',
-        headers: { authorization: `Bearer ${token}` },
-      };
-      axios
-        .request(createUserOptions)
-        .then(function (createUserResponse) {
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-
-    }
-
-    if (user) {
-      signUp();
-    }
-
-  },[user,getToken]);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -61,6 +37,7 @@ export const Dashboard = () => {
       axios.request(options).then(function (response) {
         setCourses(response.data.courses ? response.data.courses : []);
         setLoadingCourses(false);
+        setUserId(response.data._id);
       }).catch(function (error) {
         console.error(error);
       });
@@ -70,7 +47,7 @@ export const Dashboard = () => {
       fetchResult();
     }
 
-  },[user, getToken]);
+  }, [user, getToken]);
 
   const theme = useTheme();
   const [openDialogNewCourse, setOpenDialogNewCourse] = useState<boolean>(false);
@@ -188,6 +165,38 @@ export const Dashboard = () => {
     });
   }
 
+  const deleteCourse = async (courseId: string) => {
+    const token = await getToken();
+    var options = {
+      method: 'DELETE',
+      url: `http://localhost:8000/api/courses`,
+      headers: { authorization: `Bearer ${token}` },
+      data: { courseId }
+    };
+
+    axios.request(options).then(function (response) {
+      setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseId));
+    }).catch(function (error) {
+      setSnackbarInfo({ message: 'Error deleting course!', type: 'error' });
+    });
+  }
+
+  const removeCourseFromList = async (courseId: string) => {
+    const token = await getToken();
+    var options = {
+      method: 'DELETE',
+      url: `http://localhost:8000/api/users/courses`,
+      headers: { authorization: `Bearer ${token}` },
+      data: { courseId }
+    };
+
+    axios.request(options).then(function (response) {
+      setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseId));
+    }).catch(function (error) {
+      setSnackbarInfo({ message: 'Error removing course!', type: 'error' });
+    });
+  }
+
   return (
     <div className="dashboard">
       {loadingCourses ? (
@@ -214,7 +223,10 @@ export const Dashboard = () => {
               editQuestion={editQuestion}
               deleteQuestion={deleteQuestion}
               updatePublicValue={updatePublicValue}
+              deleteCourse={deleteCourse}
+              removeCourseFromList={removeCourseFromList}
               courses={courses}
+              userId={userId}
             /> :
               <p className="course-list-info">
                 You haven't added any courses yet. Add one with the button to the right.

@@ -1,12 +1,12 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { InputAdornment, TextField, Accordion, AccordionSummary, IconButton, Typography, Tooltip, Pagination, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { InputAdornment, TextField, Accordion, AccordionSummary, IconButton, Typography, Tooltip, Pagination, ToggleButton, ToggleButtonGroup, Snackbar, Alert } from '@mui/material';
 import Skeleton from 'react-loading-skeleton';
 import '../styles/searchpage.css'
 import axios from 'axios'
 import { ICourse } from '../models/user';
 import { useTheme } from '@mui/material/styles';
-import { PlayCircle, Search, AddCircleOutline, Person } from '@mui/icons-material';
+import { PlayCircle, Search, Person, PlaylistAdd, PlaylistAddCheck } from '@mui/icons-material';
 import { DialogQuiz } from '../components/DialogQuiz';
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -14,7 +14,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 export const SearchPage = () => {
     const theme = useTheme();
 
-    const { isLoading, isAuthenticated } = useAuth0();
+    const { isLoading, isAuthenticated, getAccessTokenSilently, user } = useAuth0();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -29,24 +29,53 @@ export const SearchPage = () => {
     const [openDialogQuiz, setOpenDialogQuiz] = useState<boolean>(false);
     const [currentCourse, setCurrentCourse] = useState<ICourse | null>(null);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [currentCourses, setCurrentCourses] = useState<ICourse[]>();
+    const [showSuccessSnackbar, setShowSuccessSnackbar] = useState<boolean>(false);
     const pageSize = 10;
 
+    const getToken = useCallback(async () => {
+        const token = await getAccessTokenSilently();
+        return token;
+    }, [getAccessTokenSilently]);
+
     useEffect(() => {
-            setLoadingSearchResults(true);
+        const fetchResult = async () => {
+            const token = await getToken();
             var options = {
                 method: 'GET',
-                url: 'http://localhost:8000/api/search',
-                params: { term: queryFromUrl, page: pageFromUrl, pageSize: pageSize, filter: filterFromUrl }
+                url: 'http://localhost:8000/api/users',
+                headers: { authorization: `Bearer ${token}` },
+                params: { userId: user?.sub }
             };
-
             axios.request(options).then(function (response) {
-                setSearchResults(response.data.courses ?? []);
-                setTotalPages(response.data.totalPages ?? 0)
-                setLoadingSearchResults(false);
+                setCurrentCourses(response.data.courses ? response.data.courses : []);
             }).catch(function (error) {
                 console.error(error);
             });
-        
+        }
+
+        if (user) {
+            fetchResult();
+        }
+
+    }, [user, getToken]);
+
+    useEffect(() => {
+        setLoadingSearchResults(true);
+        var options = {
+            method: 'GET',
+            url: 'http://localhost:8000/api/search',
+            params: { term: queryFromUrl, page: pageFromUrl, pageSize: pageSize, filter: filterFromUrl }
+        };
+
+        axios.request(options).then(function (response) {
+            setSearchResults(response.data.courses ?? []);
+            setTotalPages(response.data.totalPages ?? 0)
+            setLoadingSearchResults(false);
+        }).catch(function (error) {
+            console.error(error);
+        });
+
     }, [queryFromUrl, pageFromUrl, filterFromUrl]);
 
     const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
@@ -60,6 +89,22 @@ export const SearchPage = () => {
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         navigate(`/search?query=${query}&page=1&filter=${filterFromUrl}`);
+    }
+
+    const addCourse = async (courseId: string) => {
+        const token = await getToken();
+        var options = {
+            method: 'PUT',
+            url: 'http://localhost:8000/api/users/courses',
+            headers: { authorization: `Bearer ${token}` },
+            data: { courseId: courseId }
+        };
+        axios.request(options).then(function (response) {
+            setCurrentCourses(response.data.courses ? response.data.courses : []);
+            setShowSuccessSnackbar(true);
+        }).catch(function (error) {
+            console.error(error);
+        });
     }
 
     return (
@@ -121,11 +166,15 @@ export const SearchPage = () => {
                                 </div>
                                 <div className="accordion-block" onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation()}>
                                     <div className="created-by-wrapper">
-                                        <Typography className="created-by-content" fontSize={12}>Created by: <Person fontSize='small' />{course.createdBy.username} </Typography>
+                                        <Typography className="created-by-content" fontSize={12}><Person fontSize='small' />{course.createdBy.username} </Typography>
                                     </div>
                                     {isAuthenticated ?
                                         <Tooltip title="Add quiz to your list">
-                                            <AddCircleOutline />
+                                            <>
+                                                {currentCourses?.find((course_) => course.name === course_.name) ? <IconButton disabled> <PlaylistAddCheck />
+                                                </IconButton> : <IconButton onClick={() => addCourse(course._id)}> <PlaylistAdd /></IconButton>
+                                                }
+                                            </>
                                         </Tooltip> : null}
                                 </div>
                             </AccordionSummary>
@@ -135,6 +184,15 @@ export const SearchPage = () => {
                     {totalPages > 1 ? <Pagination page={pageFromUrl} style={{ marginTop: "1rem" }} count={totalPages} onChange={handlePageChange} /> : null}
                 </>
             )}
+            <Snackbar
+                open={showSuccessSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setShowSuccessSnackbar(false)}
+            >
+                <Alert onClose={() => setShowSuccessSnackbar(false)} severity={'success'} sx={{ width: '100%' }}>
+                    {"Course successfully added"}
+                </Alert>
+            </Snackbar>
             <DialogQuiz course={currentCourse} openDialog={openDialogQuiz} handleClose={() => setOpenDialogQuiz(false)} />
         </div>
     )

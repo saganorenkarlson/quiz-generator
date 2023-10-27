@@ -2,13 +2,13 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 const { auth } = require('express-oauth2-jwt-bearer');
-import { createUser, fetchUser, addCourse, addQuizItemsToCourse, updateQuizItem, deleteQuizItem, updateCoursePublicStatus, searchCourses } from "./controllers/users";
+import { fetchUser, addCourse, deleteCourse, addExistingCourse, addQuizItemsToCourse, updateQuizItem, deleteQuizItem, updateCoursePublicStatus, searchCourses, removeCourseFromUser } from "./controllers/users";
 
 // config
 dotenv.config();
 const mongoose = require('mongoose');
 const app: Express = express();
-app.use(express.json());  
+app.use(express.json());
 app.use(cors());
 const router = express.Router();
 
@@ -20,9 +20,11 @@ const checkJwt = auth({
 });
 
 // routes
-router.post("/api/users", checkJwt, createUser);
-router.get("/api/users", checkJwt, fetchUser);
+router.get("/api/users", checkJwt, fetchUser);  
+router.put("/api/users/courses", checkJwt, addExistingCourse);
+router.delete("/api/users/courses", checkJwt, removeCourseFromUser);
 router.post("/api/courses", checkJwt, addCourse);
+router.delete("/api/courses", checkJwt, deleteCourse);
 router.put("/api/courses/:courseid", checkJwt, addQuizItemsToCourse);
 router.put("/api/courses/:courseid/public", checkJwt, updateCoursePublicStatus);
 router.put("/api/courses/:courseid/:quizitemid", checkJwt, updateQuizItem);

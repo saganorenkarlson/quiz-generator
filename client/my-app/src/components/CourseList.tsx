@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { QuizListItem } from './QuizListItem';
-import { Accordion, AccordionSummary, AccordionDetails, IconButton, Tooltip, Typography, Switch } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, IconButton, Tooltip, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useTheme } from '@mui/material/styles';
+import { Person, Delete, PlaylistRemove } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
@@ -16,18 +17,21 @@ interface ICourseList {
     editQuestion: (quizItem: IQuizItem, courseId: string, question: string, answer: string) => void
     deleteQuestion: (quizItem: IQuizItem, courseId: string) => void
     updatePublicValue: (newPublicValue: boolean, courseId: string) => void
+    deleteCourse: (courseId: string) => void
+    removeCourseFromList: (courseId: string) => void
+    userId: string,
 }
 
-export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuestion, deleteQuestion, updatePublicValue, courses }) => {
+export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuestion, deleteQuestion, updatePublicValue, deleteCourse, removeCourseFromList, courses, userId }) => {
     const theme = useTheme();
     const [openDialogGenerate, setOpenDialogGenerate] = useState<boolean>(false);
     const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
     const [openDialogQuiz, setOpenDialogQuiz] = useState<boolean>(false);
     const [currentCourse, setCurrentCourse] = useState<ICourse | null>(null);
 
-    const handlePublicValueChange = (newPublicValue: boolean, courseId: string) => {
-        updatePublicValue(newPublicValue, courseId);
-    };
+    const handlePublicValueChange = (_event: React.MouseEvent<HTMLElement, MouseEvent>, value: string, courseId: string) => {
+        updatePublicValue(value === 'public' ? true : false, courseId);
+    }
 
     return (
         <div>
@@ -45,16 +49,39 @@ export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuest
                             <PlayCircleIcon sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircleIcon>
                         </IconButton>
                     </div>
-                    <div className="accordion-block" onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation()}>
-                        <Typography fontSize={12}>Private</Typography>
-                        <Switch size="small" checked={course.public} onChange={(_, checked: boolean) => handlePublicValueChange(checked, course._id)} />
-                        <Typography fontSize={12}>Public</Typography>
-                    </div>
+                    {course.createdBy.id !== userId ? <div className="created-by-wrapper">
+                        <Typography className="created-by-content" fontSize={12}><Person fontSize='small' />{course.createdBy.username} </Typography>
+                    </div> : null
+                    }
+
                 </AccordionSummary>
                 <AccordionDetails sx={{ padding: '0 0 16px 0', backgroundColor: '#F8F9FB' }}>
+                    <p className='course-settings-text'>Settings</p>
+                    <div className='course-settings'>
+                        <div className="visibility-wrapper">
+                        <p className="course-setting-visibility-text">Visibility: </p> <ToggleButtonGroup
+                        className='visibility-button'
+                            value={course.public ? 'public' : 'private'}
+                            exclusive
+                            onChange={(_event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => handlePublicValueChange(_event, value, course._id)}
+                            size='small'
+                        >
+                            <ToggleButton value="private">
+                                Private
+                            </ToggleButton>
+                            <ToggleButton value="public">
+                                Public
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                        </div>
+                        <IconButton onClick={() => course.createdBy.id === userId ? deleteCourse(course._id) : removeCourseFromList(course._id)} className="delete-button"sx={{backgroundColor: 'none', borderRadius: '4px', border:'solid #e1e4e9 1px', height: '28px'}}>
+                            {course.createdBy.id === userId ? <> <Delete sx={{width: '1rem', height: '1rem'}}/> <span className="delete-button-text">DELETE COURSE </span>  </>: <><PlaylistRemove /> <span className="delete-button-text">REMOVE FROM LIST</span> </>}
+                        </IconButton>
+                    </div>
+                    <hr className='course-hr'/>
                     <div className='quiz-header'>
                         <p className='quiz-text'>Questions</p>
-                        <Tooltip title="Genereate more questions">
+                        <Tooltip title="Generate more questions">
                             <IconButton onClick={() => { setOpenDialogGenerate(true); setSelectedCourse(course) }}>
                                 <AddCircleIcon></AddCircleIcon>
                             </IconButton>
