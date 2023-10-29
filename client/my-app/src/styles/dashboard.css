@@ -209,17 +209,32 @@
   justify-content: space-between;
 }
 
-.accordion-block {
+.accordion-block-left {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-right: 1rem;
 }
 
+.accordion-block-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  & p {
+    display: flex;
+    align-items: center;
+  }
+}
+
 .created-by-wrapper {
   color: #a4a6a9;
-  margin-right: 1rem;
   word-break: break-word;
+
+  & p {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .course-settings {

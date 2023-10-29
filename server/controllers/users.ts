@@ -196,8 +196,14 @@ export const searchCourses = async (req: Request, res: Response) => {
 
   const skip = (Number(page) - 1) * Number(pageSize);
   const limit = Number(pageSize);
-  const searchCriteria = filter === 'course' ? { name: new RegExp(term as string, 'i') } : { ['createdBy.username']: new RegExp(term as string, 'i') };
-
+  const searchCriteria = {
+    ...(
+      filter === 'course' 
+      ? { name: new RegExp(term as string, 'i') } 
+      : { ['createdBy.username']: new RegExp(term as string, 'i') }
+    ),
+    public: true
+  };
   try {
     const [courses, total] = await Promise.all([
       Course.find(searchCriteria)

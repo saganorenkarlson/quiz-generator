@@ -43,7 +43,7 @@ export const CourseList: React.FC<ICourseList> = ({ generateQuestions, editQuest
                     id="panel1a-header"
                     sx={{ display: "flex", alignItems: "center" }}
                 >
-                    <div className="accordion-block">
+                    <div className="accordion-block-left">
                         <h3 className="course-name">{course.name}</h3>
                         <IconButton aria-label='Play quiz' sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
                             <PlayCircleIcon sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircleIcon>

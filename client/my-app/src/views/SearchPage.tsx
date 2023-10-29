@@ -163,13 +163,13 @@ export const SearchPage = () => {
                                 id="panel1a-header"
                                 sx={{ display: "flex", alignItems: "center" }}
                             >
-                                <div className="accordion-block">
+                                <div className="accordion-block-left">
                                     <h3 className="course-name">{course.name}</h3>
                                     <IconButton aria-label='Play quiz' sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
                                         <PlayCircle sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircle>
                                     </IconButton>
                                 </div>
-                                <div className="accordion-block" onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation()}>
+                                <div className="accordion-block-right" onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation()}>
                                     <div className="created-by-wrapper">
                                         <Typography className="created-by-content" fontSize={12}><Person fontSize='small' />{course.createdBy.username} </Typography>
                                     </div>
