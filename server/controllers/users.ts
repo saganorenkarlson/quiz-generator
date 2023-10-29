@@ -62,8 +62,6 @@ export const addCourse = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const addExistingCourse = async (req: Request, res: Response) => {
   const userId = req.auth?.payload.sub;
   const courseId = req.body.courseId;
