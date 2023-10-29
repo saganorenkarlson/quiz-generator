@@ -70,10 +70,34 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
             Website information
             <InfoIcon sx={{ marginLeft: "0.7rem", marginTop: "0.2rem", color: theme.palette.primary.main }} />
           </div>
-          <p className="information-dialog-text">This website is your automatic quiz generator. Enter course material and let the website give you a quiz to practice on.
-            Easily browse your saved courses and edit the quizzes according to your liking. <br></br> <br></br>
-            Quiz generator uses OpenAI.
-          </p>
+          <div className='information-dialog-text'>
+            <h3>Welcome to Quiz Generator!</h3>
+            <p>
+              This intuitive platform transforms your course material into interactive quizzes, making studying both efficient and engaging. Here's what you can do:
+            </p>
+            <ul>
+              <li>
+                <b>Create Custom Quizzes:</b> Simply input your study material, and let our AI-powered system generate tailored quizzes for you.
+              </li>
+              <li>
+                <b>Edit and Organize:</b> Have full control over your quizzes. Edit them to fit your learning needs.
+              </li>
+              <li>
+                <b>Share and Collaborate:</b> Take your learning experience further by sharing your quizzes with friends or classmates. It's a great way to test each other's knowledge and enhance understanding.
+              </li>
+              <li>
+                <b>Discover New Content:</b> Delve into quizzes created by other users. This feature not only broadens your knowledge but also introduces you to different perspectives and topics.
+              </li>
+              <li>
+                <b>Powered by OpenAI:</b> This system uses the latest in AI technology from OpenAI, ensuring a dynamic and responsive quiz-making experience.
+              </li>
+            </ul>
+          </div>
+          {/* <p className="information-dialog-text">
+
+
+
+          </p> */}
         </div>
       </Dialog>)
   };
