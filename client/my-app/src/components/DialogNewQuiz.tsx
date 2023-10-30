@@ -13,8 +13,14 @@ export const DialogNewQuiz: React.FC<IDialogNewQuiz> = ({ openDialog, handleClos
   const [quizName, setQuizName] = useState<string>("");
   const [courseMaterial, setCourseMaterial] = useState<string>("");
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
+  const [error, setError] = useState<string>("");
 
   const validateSubmit = () => {
+    if (!quizName.trim() || !courseMaterial.trim()) {
+      setError("Both Quiz name and Course material are required");
+      return;
+    }
+    setError("");
     handleSubmit(quizName, courseMaterial, numberOfQuestions);
     setCourseMaterial("");
   }
@@ -43,6 +49,7 @@ export const DialogNewQuiz: React.FC<IDialogNewQuiz> = ({ openDialog, handleClos
             }}
           />
           <TextField
+            required
             id="outlined-multiline-flexible"
             label="Course material"
             onChange={(e) => setCourseMaterial(e.target.value)}
@@ -81,6 +88,7 @@ export const DialogNewQuiz: React.FC<IDialogNewQuiz> = ({ openDialog, handleClos
               </MenuItem>
             ))}
           </TextField>
+          {error && <p style={{ color: 'red', margin: '0 0 0.5rem 0', padding:'0', fontSize: '0.8rem' }}>{error}</p>}
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={validateSubmit}>Submit</Button>

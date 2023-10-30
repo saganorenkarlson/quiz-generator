@@ -14,10 +14,13 @@ export const DialogGenerate: React.FC<IDialogGenerate> = ({ quiz, openDialog, ha
 
   const [courseMaterial, setCourseMaterial] = useState<string>("");
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
+  const [error, setError] = useState<string>("");
 
   const validateSubmit = () => {
-    //check that input is correct
-    handleSubmit(quiz, courseMaterial, numberOfQuestions);
+    if (!courseMaterial.trim()) {
+      setError("Course material is required");
+      return;
+    } handleSubmit(quiz, courseMaterial, numberOfQuestions);
     setCourseMaterial("");
     handleClose();
   }
@@ -50,6 +53,7 @@ export const DialogGenerate: React.FC<IDialogGenerate> = ({ quiz, openDialog, ha
           />
           <TextField
             id="outlined-disabled"
+            required
             select
             label="Number of questions to be generated"
             disabled={!courseMaterial}
@@ -72,6 +76,7 @@ export const DialogGenerate: React.FC<IDialogGenerate> = ({ quiz, openDialog, ha
               </MenuItem>
             ))}
           </TextField>
+          {error && <p style={{ color: 'red', margin: '0 0 0.5rem 0', padding:'0', fontSize: '0.8rem' }}>{error}</p>}
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={validateSubmit}>Submit</Button>
