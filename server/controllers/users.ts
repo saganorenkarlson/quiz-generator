@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import { IQuizItem } from "../models/quiz-item";
 import OpenAI from 'openai';
 import dotenv from "dotenv";
+import { Console } from "console";
 const ObjectId = require('mongodb').ObjectId;
 
 dotenv.config();
@@ -96,7 +97,6 @@ export const addExistingQuiz = async (req: Request, res: Response) => {
 
 export const addQuizItemsToQuiz = async (req: Request, res: Response) => {
   const quizId = req.params.quizid;
-  console.log(quizId);
   const courseMaterial = req.body.courseMaterial;
   const numberOfQuestions = req.body.numberOfQuestions;
   const prompt = `From the following material generate ${numberOfQuestions} questions with answers to help studying the material. Give it in this format: [{"question": "question here", "answer": "answer here"}, {"question": "another question", "answer": "another answer"}]. Material: ${courseMaterial}`;
@@ -220,7 +220,7 @@ export const searchQuizzes = async (req: Request, res: Response) => {
 
 export const deleteQuiz = async (req: Request, res: Response) => {
   const userId = req.auth?.payload.sub;
-  const quizId = req.params.quizId;
+  const quizId = req.params.quizid;
 
   try {
 
@@ -244,7 +244,7 @@ export const deleteQuiz = async (req: Request, res: Response) => {
 
 export const removeQuizFromUser = async (req: Request, res: Response) => {
   const userId = req.auth?.payload.sub;
-  const quizId = req.params.quizId;
+  const quizId = req.params.quizid;
 
   try {
     const user = await User.findOne({ userId }).exec();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Dialog, IconButton } from '@mui/material'
 import { IQuiz } from '../models/user'
 import '../styles/dashboard.css'
@@ -15,7 +15,31 @@ export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, qui
     const [isFlipped, setIsFlipped] = useState<boolean>(false);
     const [index, setIndex] = useState<number>(1);
 
-    if (!openDialog) return null;
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (!openDialog) return;
+    
+            switch (event.key) {
+                case 'ArrowLeft':
+                    if (index > 1) setIndex(index - 1);
+                    break;
+                case 'ArrowRight':
+                    if (index !== quiz?.quiz?.length) setIndex(index + 1);
+                    break;
+                case ' ':
+                    setIsFlipped(!isFlipped);
+                    break;
+                default:
+                    break;
+            }
+        };
+    
+        window.addEventListener('keydown', handleKeyPress);
+    
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [index, isFlipped, quiz, openDialog]);
 
     const updateIndex = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, change: number) => {
         e.stopPropagation();
@@ -54,16 +78,15 @@ export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, qui
                         </div>
                     </div>
                     <div className='quiz-navigation' onClick={(e) => e.stopPropagation()}>
-                        <IconButton disabled={index === 1} onClick={(e) => updateIndex(e, -1)}>
+                        <IconButton sx={{color: "white"}} disabled={index === 1} onClick={(e) => updateIndex(e, -1)}>
                             <ArrowBackIosNewOutlinedIcon />
                         </IconButton>
                         <p className="quiz-navigation-text">{index}/{quiz.quiz.length}</p>
-                        <IconButton disabled={index === quiz.quiz.length} onClick={(e) => updateIndex(e, 1)}>
+                        <IconButton sx={{color: "white"}} disabled={index === quiz.quiz.length} onClick={(e) => updateIndex(e, 1)}>
                             <ArrowForwardIosOutlinedIcon />
                         </IconButton>
                     </div>
                 </div>
             </Dialog > :
-            <div>No questions</div>
-    )
+            null)
 }

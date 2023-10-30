@@ -173,6 +173,7 @@ export const Dashboard = () => {
       headers: { authorization: `Bearer ${token}` },
     };
 
+    console.log(quizId)
     axios.request(options).then(function (response) {
       setQuizzes((prevQuizzes) => prevQuizzes.filter(quiz => quiz._id !== quizId));
     }).catch(function (error) {
