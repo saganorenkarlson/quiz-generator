@@ -1,4 +1,4 @@
-export interface ICourse {
+export interface IQuiz {
     _id: string;
     name: string;
     quiz: IQuizItem[];

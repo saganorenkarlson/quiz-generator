@@ -1,20 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import '../styles/dashboard.css'
-import { CourseList } from '../components/CourseList';
-import { DialogNewCourse } from '../components/DialogNewCourse';
+import { QuizList } from '../components/QuizList';
+import { DialogNewQuiz } from '../components/DialogNewQuiz';
 import { IconButton, Backdrop, CircularProgress, Typography, useTheme, Snackbar, Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
-import { ICourse, IQuizItem } from '../models/user';
+import { IQuiz, IQuizItem } from '../models/user';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 
 export const Dashboard = () => {
 
   const { getAccessTokenSilently, user } = useAuth0();
-  const [courses, setCourses] = useState<ICourse[]>([]);
-  const [loadingCourses, setLoadingCourses] = useState<boolean>(true);
+  const [quizzes, setQuizzes] = useState<IQuiz[]>([]);
+  const [loadingQuizzes, setLoadingQuizzes] = useState<boolean>(true);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
   const [snackbarInfo, setSnackbarInfo] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [userId, setUserId] = useState<string>('');
@@ -35,8 +35,8 @@ export const Dashboard = () => {
       };
 
       axios.request(options).then(function (response) {
-        setCourses(response.data.courses ? response.data.courses : []);
-        setLoadingCourses(false);
+        setQuizzes(response.data.quizzes ? response.data.quizzes : []);
+        setLoadingQuizzes(false);
         setUserId(response.data._id);
       }).catch(function (error) {
         console.error(error);
@@ -50,59 +50,59 @@ export const Dashboard = () => {
   }, [user, getToken]);
 
   const theme = useTheme();
-  const [openDialogNewCourse, setOpenDialogNewCourse] = useState<boolean>(false);
+  const [openDialogNewQuiz, setOpenDialogNewQuiz] = useState<boolean>(false);
 
   const handleClickOpen = () => {
-    setOpenDialogNewCourse(true);
+    setOpenDialogNewQuiz(true);
   };
 
   const handleClose = () => {
-    setOpenDialogNewCourse(false);
+    setOpenDialogNewQuiz(false);
   };
 
-  const addCourse = async (courseName: string, courseMaterial: string, numberOfQuestions: number) => {
+  const addQuiz = async (quizName: string, courseMaterial: string, numberOfQuestions: number) => {
     setGeneratingQuestions(true);
     const token = await getToken();
-    const data = { name: courseName, courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions, userName: user?.nickname };
+    const data = { name: quizName, courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions, userName: user?.nickname };
 
     var options = {
       method: 'POST',
-      url: `http://localhost:8000/api/courses`,
+      url: `http://localhost:8000/api/quizzes`,
       headers: { authorization: `Bearer ${token}` },
       data: data,
     };
 
     axios.request(options).then(function (response) {
-      const newCourse = response.data;
-      setCourses(prevCourses => [...prevCourses, newCourse]);
+      const newQuiz = response.data;
+      setQuizzes(prevQuizzes => [...prevQuizzes, newQuiz]);
       setGeneratingQuestions(false);
-      setSnackbarInfo({ message: "Course added successfully", type: 'success' });
+      setSnackbarInfo({ message: "Quiz added successfully", type: 'success' });
     }).catch(function (error) {
       setGeneratingQuestions(false);
-      setSnackbarInfo({ message: 'Error adding course!', type: 'error' });
+      setSnackbarInfo({ message: 'Error adding quiz!', type: 'error' });
     });
 
     handleClose();
   }
 
 
-  const generateQuestions = async (course: ICourse | null, courseMaterial: string, numberOfQuestions: number) => {
+  const generateQuestions = async (quiz: IQuiz | null, courseMaterial: string, numberOfQuestions: number) => {
     setGeneratingQuestions(true);
 
     const token = await getToken();
-    if (!course) return;
+    if (!quiz) return;
     const data = { courseMaterial: courseMaterial, numberOfQuestions: numberOfQuestions };
 
     var options = {
-      method: 'PUT',
-      url: `http://localhost:8000/api/courses/${course._id}`,
+      method: 'POST',
+      url: `http://localhost:8000/api/quizzes/${quiz._id}/items`,
       headers: { authorization: `Bearer ${token}` },
       data: data,
     };
 
     axios.request(options).then(function (response) {
-      const updatedCourse = response.data;
-      setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
+      const updatedQuiz = response.data;
+      setQuizzes(prevQuizzes => prevQuizzes.map(c => c._id === updatedQuiz._id ? updatedQuiz : c));
       setGeneratingQuestions(false);
       setSnackbarInfo({ message: "Questions generated successfully", type: 'success' });
     }).catch(function (error) {
@@ -112,131 +112,129 @@ export const Dashboard = () => {
 
   }
 
-  const editQuestion = async (quizItem: IQuizItem, courseId: string, question: string, answer: string) => {
+  const editQuestion = async (quizItem: IQuizItem, quizId: string, question: string, answer: string) => {
     const token = await getToken();
     const newQuizItem = { question, answer };
 
     var options = {
       method: 'PUT',
-      url: `http://localhost:8000/api/courses/${courseId}/${quizItem._id}`,
+      url: `http://localhost:8000/api/quizzes/${quizId}/items/${quizItem._id}`,
       headers: { authorization: `Bearer ${token}` },
       data: newQuizItem,
     };
 
     axios.request(options).then(function (response) {
-      const updatedCourse = response.data;
-      setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
+      const updatedQuiz = response.data;
+      setQuizzes(prevQuizzes => prevQuizzes.map(c => c._id === updatedQuiz._id ? updatedQuiz : c));
     }).catch(function (error) {
       setSnackbarInfo({ message: 'Error editing questions!', type: 'error' });
     });
 
   }
 
-  const deleteQuestion = async (quizItem: IQuizItem, courseId: string) => {
+  const deleteQuestion = async (quizItem: IQuizItem, quizId: string) => {
     const token = await getToken();
     var options = {
       method: 'DELETE',
-      url: `http://localhost:8000/api/courses/${courseId}/${quizItem._id}`,
+      url: `http://localhost:8000/api/quizzes/${quizId}/items/${quizItem._id}`,
       headers: { authorization: `Bearer ${token}` },
     };
 
     axios.request(options).then(function (response) {
-      const updatedCourse = response.data;
-      setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
+      const updatedQuiz = response.data;
+      setQuizzes(prevQuizzes => prevQuizzes.map(c => c._id === updatedQuiz._id ? updatedQuiz : c));
     }).catch(function (error) {
       setSnackbarInfo({ message: 'Error deleting question!', type: 'error' });
     });
   }
 
-  const updatePublicValue = async (newPublicValue: boolean, courseId: string) => {
+  const updatePublicValue = async (newPublicValue: boolean, quizId: string) => {
     const token = await getToken();
     var options = {
       method: 'PUT',
-      url: `http://localhost:8000/api/courses/${courseId}/public`,
+      url: `http://localhost:8000/api/quizzes/${quizId}/public-status`,
       headers: { authorization: `Bearer ${token}` },
       data: { isPublic: newPublicValue },
     };
 
     axios.request(options).then(function (response) {
-      const updatedCourse = response.data;
-      setCourses(prevCourses => prevCourses.map(c => c._id === updatedCourse._id ? updatedCourse : c));
+      const updatedQuiz = response.data;
+      setQuizzes(prevQuizzes => prevQuizzes.map(c => c._id === updatedQuiz._id ? updatedQuiz : c));
     }).catch(function (error) {
       setSnackbarInfo({ message: 'Error editing questions!', type: 'error' });
     });
   }
 
-  const deleteCourse = async (courseId: string) => {
+  const deleteQuiz = async (quizId: string) => {
     const token = await getToken();
     var options = {
       method: 'DELETE',
-      url: `http://localhost:8000/api/courses`,
+      url: `http://localhost:8000/api/users/quizzes/${quizId}`,
       headers: { authorization: `Bearer ${token}` },
-      data: { courseId }
     };
 
     axios.request(options).then(function (response) {
-      setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseId));
+      setQuizzes((prevQuizzes) => prevQuizzes.filter(quiz => quiz._id !== quizId));
     }).catch(function (error) {
-      setSnackbarInfo({ message: 'Error deleting course!', type: 'error' });
+      setSnackbarInfo({ message: 'Error deleting quiz!', type: 'error' });
     });
   }
 
-  const removeCourseFromList = async (courseId: string) => {
+  const removeQuizFromList = async (quizId: string) => {
     const token = await getToken();
     var options = {
       method: 'DELETE',
-      url: `http://localhost:8000/api/users/courses`,
+      url: `http://localhost:8000/api/users/quizzes/${quizId}/remove`,
       headers: { authorization: `Bearer ${token}` },
-      data: { courseId }
     };
 
     axios.request(options).then(function (response) {
-      setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseId));
+      setQuizzes((prevQuizzes) => prevQuizzes.filter(quiz => quiz._id !== quizId));
     }).catch(function (error) {
-      setSnackbarInfo({ message: 'Error removing course!', type: 'error' });
+      setSnackbarInfo({ message: 'Error removing quiz!', type: 'error' });
     });
   }
 
   return (
     <div className="dashboard">
-      {loadingCourses ? (
+      {loadingQuizzes ? (
         <>
           <div className="loading-skeleton">
             <Skeleton height={50} width={300} />
-            <Skeleton className="add-course-loading-skeleton" circle={true} height={35} width={35} />
+            <Skeleton className="add-quiz-loading-skeleton" circle={true} height={35} width={35} />
           </div>
-          <Skeleton className="course-loading-skeleton" count={4} height={72} />
+          <Skeleton className="quiz-loading-skeleton" count={4} height={72} />
         </>
       ) : (
         <>
           <div className='dashboard-upper-wrapper'>
             <Typography variant="h5" component="h1" sx={{ color: theme.palette.text.primary }}>
-              Courses
+              Quizzes
             </Typography>
-            <IconButton aria-label='Create course' onClick={handleClickOpen} size="large" sx={{ color: theme.palette.text.secondary }}>
+            <IconButton aria-label='Create quiz' onClick={handleClickOpen} size="large" sx={{ color: theme.palette.text.secondary }}>
               <AddCircleIcon fontSize='large'></AddCircleIcon>
             </IconButton>
           </div>
           <div>
-            {courses.length > 0 ? <CourseList
+            {quizzes.length > 0 ? <QuizList
               generateQuestions={generateQuestions}
               editQuestion={editQuestion}
               deleteQuestion={deleteQuestion}
               updatePublicValue={updatePublicValue}
-              deleteCourse={deleteCourse}
-              removeCourseFromList={removeCourseFromList}
-              courses={courses}
+              deleteQuiz={deleteQuiz}
+              removeQuizFromList={removeQuizFromList}
+              quizzes={quizzes}
               userId={userId}
             /> :
-              <p className="course-list-info">
-                You haven't added any courses yet. Add one with the button to the right.
+              <p className="quiz-list-info">
+                You haven't added any quizzes yet. Add one with the button to the right.
               </p>
             }
 
-            <DialogNewCourse
-              openDialog={openDialogNewCourse}
+            <DialogNewQuiz
+              openDialog={openDialogNewQuiz}
               handleClose={handleClose}
-              handleSubmit={addCourse}
+              handleSubmit={addQuiz}
             />
           </div>
         </>

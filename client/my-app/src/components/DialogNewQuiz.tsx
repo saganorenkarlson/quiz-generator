@@ -1,25 +1,22 @@
 import React, { useState } from 'react'
 import { Dialog, TextField, MenuItem, DialogActions, Button } from '@mui/material'
-import { IQuiz } from '../models/user'
 
-interface IDialogGenerate {
-  quiz: IQuiz | null,
+interface IDialogNewQuiz {
   openDialog: boolean,
   handleClose: () => void,
-  handleSubmit: (quiz: IQuiz | null, courseMaterial: string, numberOfQuestions: number) => void,
+  handleSubmit: (quizName: string, courseMaterial: string, numberOfQuestions: number) => void,
 }
 
-export const DialogGenerate: React.FC<IDialogGenerate> = ({ quiz, openDialog, handleClose, handleSubmit }) => {
+export const DialogNewQuiz: React.FC<IDialogNewQuiz> = ({ openDialog, handleClose, handleSubmit }) => {
   const nrQuestionOptions = [5, 10, 15, 20]
 
+  const [quizName, setQuizName] = useState<string>("");
   const [courseMaterial, setCourseMaterial] = useState<string>("");
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
 
   const validateSubmit = () => {
-    //check that input is correct
-    handleSubmit(quiz, courseMaterial, numberOfQuestions);
+    handleSubmit(quizName, courseMaterial, numberOfQuestions);
     setCourseMaterial("");
-    handleClose();
   }
 
   return (
@@ -29,10 +26,22 @@ export const DialogGenerate: React.FC<IDialogGenerate> = ({ quiz, openDialog, ha
       maxWidth="sm">
       <div className='quiz-dialog'>
         <div className="quiz-dialog-title">
-          Generate questions
+          Add new quiz
         </div>
         <div className='quiz-dialog-content'>
-
+          <TextField
+            required
+            id="outlined-required"
+            label="Quiz name"
+            onChange={(e) => setQuizName(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            sx={{
+              '& .MuiFormLabel-root': {
+                color: '#485A6C',
+              },
+              marginBottom: '1rem'
+            }}
+          />
           <TextField
             id="outlined-multiline-flexible"
             label="Course material"

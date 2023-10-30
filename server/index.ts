@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 const { auth } = require('express-oauth2-jwt-bearer');
-import { fetchUser, addCourse, deleteCourse, addExistingCourse, addQuizItemsToCourse, updateQuizItem, deleteQuizItem, updateCoursePublicStatus, searchCourses, removeCourseFromUser } from "./controllers/users";
+import { fetchUser, addQuiz, deleteQuiz, addExistingQuiz, addQuizItemsToQuiz, updateQuizItem, deleteQuizItem, updateQuizPublicStatus, searchQuizzes, removeQuizFromUser } from "./controllers/users";
 
 // config
 dotenv.config();
@@ -20,16 +20,17 @@ const checkJwt = auth({
 });
 
 // routes
-router.get("/api/users", checkJwt, fetchUser);  
-router.put("/api/users/courses", checkJwt, addExistingCourse);
-router.delete("/api/users/courses", checkJwt, removeCourseFromUser);
-router.post("/api/courses", checkJwt, addCourse);
-router.delete("/api/courses", checkJwt, deleteCourse);
-router.put("/api/courses/:courseid", checkJwt, addQuizItemsToCourse);
-router.put("/api/courses/:courseid/public", checkJwt, updateCoursePublicStatus);
-router.put("/api/courses/:courseid/:quizitemid", checkJwt, updateQuizItem);
-router.delete("/api/courses/:courseid/:quizitemid", checkJwt, deleteQuizItem);
-router.get("/api/search", searchCourses);
+router.get("/api/users", checkJwt, fetchUser);
+router.post('/api/users/quizzes/:quizid', checkJwt, addExistingQuiz);
+router.delete('/api/users/quizzes/:quizid/remove', checkJwt, removeQuizFromUser);
+router.post('/api/quizzes', checkJwt, addQuiz);
+router.delete('/api/users/quizzes/:quizid', checkJwt, deleteQuiz);
+router.post('/api/quizzes/:quizid/items', checkJwt, addQuizItemsToQuiz);
+router.put('/api/quizzes/:quizid/public-status', checkJwt, updateQuizPublicStatus);
+router.put('/api/quizzes/:quizid/items/:quizitemid', checkJwt, updateQuizItem);
+router.delete('/api/quizzes/:quizid/items/:quizitemid', checkJwt, deleteQuizItem);
+router.get("/api/search", searchQuizzes);
+
 
 app.use(router);
 app.get('/', checkJwt, (req: Request, res: Response) => {

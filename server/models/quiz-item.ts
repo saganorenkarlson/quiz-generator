@@ -1,4 +1,4 @@
-import mongoose, { model, Schema, Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface IQuizItem extends Document {
   question: string;

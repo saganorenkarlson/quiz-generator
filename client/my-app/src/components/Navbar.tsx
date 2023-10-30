@@ -43,7 +43,7 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setOpenSearchDialog(false);
-    navigate(`/search?query=${query}&page=1&filter=course`);
+    navigate(`/search?query=${query}&page=1&filter=quiz`);
   }
 
   const handleAuthentication = async () => {
@@ -107,16 +107,16 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
     return (
       <Dialog className="information-dialog-wrapper" open={openSearchDialog} onClose={() => setOpenSearchDialog(false)}>
         <div className='information-dialog'>
-          <form onSubmit={handleSearch}>
+          <form id="search-dialog"onSubmit={handleSearch}>
             <TextField
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setQuery(event.target.value)
               }}
-              placeholder="Search course or user"
+              placeholder="Search quiz or user"
               size='small'
               type='text'
               inputProps={{
-                'aria-label': 'Search course or user'
+                'aria-label': 'Search quiz or user'
               }}
               InputProps={{
                 startAdornment: (
@@ -147,18 +147,18 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
             : <>
               <div className="navbar-options-wrapper">
                 {isAuthenticated && location.pathname !== '/search' ? (isMobile ?
-                  <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px', padding: '10px' }} onClick={() => setOpenSearchDialog(true)} size="large" aria-label="Search courses or users">
+                  <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px', padding: '10px' }} onClick={() => setOpenSearchDialog(true)} size="large" aria-label="Search quizzes or users">
                     <Search fontSize='small' />
-                  </IconButton> : <form onSubmit={handleSearch}>
+                  </IconButton> : <form id="search-nabvar" onSubmit={handleSearch}>
                     <TextField
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         setQuery(event.target.value)
                       }}
-                      placeholder="Search course or user"
+                      placeholder="Search quiz or user"
                       size='small'
                       type='text'
                       inputProps={{
-                        'aria-label': 'Search course or user'
+                        'aria-label': 'Search quiz or user'
                       }}
                       InputProps={{
                         startAdornment: (
@@ -171,7 +171,7 @@ export const Navbar: React.FC<INavbar> = ({ loading }) => {
                   </form>) : null}
                 {isAuthenticated ? <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px' }} onClick={() => navigate('/')} size="large" aria-label="website description">
                   <ListIcon fontSize='small' />
-                  <span className={"navbar-option-text"}>MY COURSES</span>
+                  <span className={"navbar-option-text"}>MY QUIZZES</span>
                 </IconButton> : null}
                 <IconButton sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '40px' }} onClick={handleClickOpen} size="large" aria-label="website description">
                   <InfoIcon fontSize='small' sx={{ color: theme.palette.secondary.main }} />

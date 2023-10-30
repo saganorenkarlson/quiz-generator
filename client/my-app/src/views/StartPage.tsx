@@ -22,16 +22,16 @@ export const StartPage = () => {
         <div className="start-page-wrapper">
             <Typography fontSize={'42px'} fontWeight={'600'}>This is Quiz-generator</Typography>
             <Typography fontSize={'16px'}>Log in to create your own quizzes or use the searchbar to explore quizzes created by other users</Typography>
-            <form className='search-form' onSubmit={handleSearch}>
+            <form id="search-startpage" className='search-form' onSubmit={handleSearch}>
                 <TextField
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         setQuery(event.target.value);
                     }}
-                    placeholder={'Search course or user'}
+                    placeholder={'Search quiz or user'}
                     size='medium'
                     type='text'
                     inputProps={{
-                        'aria-label': 'Search course or user'
+                        'aria-label': 'Search quiz or user'
                       }}
                     InputProps={{
                         startAdornment: (

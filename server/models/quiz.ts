@@ -1,9 +1,9 @@
 import { IQuizItem } from './quiz-item';
-import { Document, ObjectId } from 'mongoose';
+import { Document } from 'mongoose';
 import quizItemSchema from './quiz-item';
 import mongoose from 'mongoose';
 
-export interface ICourse extends Document {
+export interface IQuiz extends Document {
   name: string;
   quiz: IQuizItem[];
   createdBy: {
@@ -13,7 +13,7 @@ export interface ICourse extends Document {
   public: boolean;
 }
 
-const courseSchema = new mongoose.Schema({
+const quizSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -38,6 +38,6 @@ const courseSchema = new mongoose.Schema({
   }
 });
 
-const Course = mongoose.model('Course', courseSchema);
+const Quiz = mongoose.model('Quiz', quizSchema);
 
-export default Course;
+export default Quiz;

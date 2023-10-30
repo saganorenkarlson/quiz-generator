@@ -15,7 +15,6 @@ export const DialogEdit:React.FC<IDialogEdit> = ({currentQuestion, currentAnswer
   const [answer, setAnswer] = useState<string>(currentAnswer);
 
   const validateSubmit = () => {
-    //TODO: validate input
     handleSubmit(question,answer);
     handleClose();
   }
@@ -25,11 +24,11 @@ export const DialogEdit:React.FC<IDialogEdit> = ({currentQuestion, currentAnswer
       open={openDialog} onClose={handleClose}  
       fullWidth
       maxWidth="sm">
-      <div className='course-dialog'>
-        <div className="course-dialog-title">
+      <div className='quiz-dialog'>
+        <div className="quiz-dialog-title">
           Edit question
         </div>
-        <div className='course-dialog-content'>
+        <div className='quiz-dialog-content'>
         
           <TextField
           id="outlined-multiline-flexible"

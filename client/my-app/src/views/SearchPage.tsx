@@ -4,7 +4,7 @@ import { InputAdornment, TextField, Accordion, AccordionSummary, IconButton, Typ
 import Skeleton from 'react-loading-skeleton';
 import '../styles/searchpage.css'
 import axios from 'axios'
-import { ICourse } from '../models/user';
+import { IQuiz } from '../models/user';
 import { useTheme } from '@mui/material/styles';
 import { PlayCircle, Search, Person, PlaylistAdd, PlaylistAddCheck } from '@mui/icons-material';
 import { DialogQuiz } from '../components/DialogQuiz';
@@ -21,15 +21,15 @@ export const SearchPage = () => {
     const params = new URLSearchParams(location.search);
     const queryFromUrl = params.get('query');
     const pageFromUrl: number = Number(params.get('page')) ?? 1;
-    const filterFromUrl = params.get('filter') ?? 'course';
+    const filterFromUrl = params.get('filter') ?? 'quiz';
 
     const [query, setQuery] = useState<string>('');
-    const [searchResults, setSearchResults] = useState<ICourse[]>()
+    const [searchResults, setSearchResults] = useState<IQuiz[]>()
     const [loadingSearchResults, setLoadingSearchResults] = useState<boolean>(false);
     const [openDialogQuiz, setOpenDialogQuiz] = useState<boolean>(false);
-    const [currentCourse, setCurrentCourse] = useState<ICourse | null>(null);
+    const [currentQuiz, setCurrentQuiz] = useState<IQuiz | null>(null);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [currentCourses, setCurrentCourses] = useState<ICourse[]>();
+    const [currentQuizzes, setCurrentQuizzes] = useState<IQuiz[]>();
     const [showSuccessSnackbar, setShowSuccessSnackbar] = useState<boolean>(false);
     const pageSize = 10;
 
@@ -48,7 +48,7 @@ export const SearchPage = () => {
                 params: { userId: user?.sub }
             };
             axios.request(options).then(function (response) {
-                setCurrentCourses(response.data.courses ? response.data.courses : []);
+                setCurrentQuizzes(response.data.quizzes ? response.data.quizzes : []);
             }).catch(function (error) {
                 console.error(error);
             });
@@ -69,7 +69,7 @@ export const SearchPage = () => {
         };
 
         axios.request(options).then(function (response) {
-            setSearchResults(response.data.courses ?? []);
+            setSearchResults(response.data.quizzes ?? []);
             setTotalPages(response.data.totalPages ?? 0)
             setLoadingSearchResults(false);
         }).catch(function (error) {
@@ -91,16 +91,15 @@ export const SearchPage = () => {
         navigate(`/search?query=${query}&page=1&filter=${filterFromUrl}`);
     }
 
-    const addCourse = async (courseId: string) => {
+    const addQuiz = async (quizId: string) => {
         const token = await getToken();
         var options = {
-            method: 'PUT',
-            url: 'http://localhost:8000/api/users/courses',
+            method: 'POST',
+            url: `http://localhost:8000/api/users/quizzes/${quizId}`,
             headers: { authorization: `Bearer ${token}` },
-            data: { courseId: courseId }
         };
         axios.request(options).then(function (response) {
-            setCurrentCourses(response.data.courses ? response.data.courses : []);
+            setCurrentQuizzes(response.data.quizzes ? response.data.quizzes : []);
             setShowSuccessSnackbar(true);
         }).catch(function (error) {
             console.error(error);
@@ -110,16 +109,16 @@ export const SearchPage = () => {
     return (
         <div className='search-page-wrapper'>
             <Typography className="search-page-title" fontWeight={600} fontSize={'28px'}>Showing results for <i>{queryFromUrl}</i></Typography>
-            <form className='search-form' onSubmit={handleSearch}>
+            <form  id="search-searchpage" className='search-form' onSubmit={handleSearch}>
                 <TextField
                     type="text"
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         setQuery(event.target.value);
                     }}
                     inputProps={{
-                        'aria-label': 'Search course or user'
-                      }}
-                    placeholder={queryFromUrl || 'Search course or user'}
+                        'aria-label': 'Search quiz or user'
+                    }}
+                    placeholder={queryFromUrl || 'Search quiz or user'}
                     defaultValue={queryFromUrl}
                     size='small'
                     InputProps={{
@@ -140,8 +139,8 @@ export const SearchPage = () => {
                     onChange={handleFilterChange}
                     size='small'
                 >
-                    <ToggleButton value="course">
-                        Course
+                    <ToggleButton value="quiz">
+                        Quiz
                     </ToggleButton>
                     <ToggleButton value="user">
                         User
@@ -151,12 +150,12 @@ export const SearchPage = () => {
 
             {loadingSearchResults || isLoading ? (
                 <div className="result-list">
-                    <Skeleton className="course-loading-skeleton" count={4} height={72} />
+                    <Skeleton className="quiz-loading-skeleton" count={4} height={72} />
                 </div>
             ) : (
                 <>
                     <div className="result-list">
-                        {searchResults?.map((course) => <Accordion key={course._id} sx={{ marginBottom: '0.5rem' }}>
+                        {searchResults?.map((quiz) => <Accordion key={quiz._id} sx={{ marginBottom: '0.5rem' }}>
                             <AccordionSummary
                                 expandIcon={null}
                                 aria-controls="panel1a-content"
@@ -164,20 +163,20 @@ export const SearchPage = () => {
                                 sx={{ display: "flex", alignItems: "center" }}
                             >
                                 <div className="accordion-block-left">
-                                    <h3 className="course-name">{course.name}</h3>
-                                    <IconButton aria-label='Play quiz' sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentCourse(course); setOpenDialogQuiz(true); }}>
+                                    <h3 className="quiz-name">{quiz.name}</h3>
+                                    <IconButton aria-label='Play quiz' sx={{ fontSize: "2rem", height: "fit-content" }} onClick={(e) => { e.stopPropagation(); setCurrentQuiz(quiz); setOpenDialogQuiz(true); }}>
                                         <PlayCircle sx={{ fontSize: "2rem", color: theme.palette.text.secondary }}></PlayCircle>
                                     </IconButton>
                                 </div>
                                 <div className="accordion-block-right" onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation()}>
                                     <div className="created-by-wrapper">
-                                        <Typography className="created-by-content" fontSize={12}><Person fontSize='small' />{course.createdBy.username} </Typography>
+                                        <Typography className="created-by-content" fontSize={12}><Person fontSize='small' />{quiz.createdBy.username} </Typography>
                                     </div>
                                     {isAuthenticated ?
-                                        (currentCourses?.find((course_) => course.name === course_.name) ? <IconButton disabled> <PlaylistAddCheck />
+                                        (currentQuizzes?.find((quiz_) => quiz.name === quiz_.name) ? <IconButton disabled> <PlaylistAddCheck />
                                         </IconButton> :
-                                            <Tooltip title="Add course to your list">
-                                                <IconButton aria-label='Add course to list' onClick={() => addCourse(course._id)}>
+                                            <Tooltip title="Add quiz to your list">
+                                                <IconButton aria-label='Add quiz to list' onClick={() => addQuiz(quiz._id)}>
                                                     <PlaylistAdd />
                                                 </IconButton>
                                             </Tooltip>
@@ -197,10 +196,10 @@ export const SearchPage = () => {
                 onClose={() => setShowSuccessSnackbar(false)}
             >
                 <Alert onClose={() => setShowSuccessSnackbar(false)} severity={'success'} sx={{ width: '100%' }}>
-                    {"Course successfully added"}
+                    {"Quiz successfully added"}
                 </Alert>
             </Snackbar>
-            <DialogQuiz course={currentCourse} openDialog={openDialogQuiz} handleClose={() => setOpenDialogQuiz(false)} />
+            <DialogQuiz quiz={currentQuiz} openDialog={openDialogQuiz} handleClose={() => setOpenDialogQuiz(false)} />
         </div>
     )
 }

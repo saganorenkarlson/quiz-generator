@@ -2,7 +2,7 @@ import mongoose, { Document } from "mongoose";
 
 export interface IUser extends Document {
     userId: string;
-    courses: mongoose.Types.ObjectId[];
+    quizzes: mongoose.Types.ObjectId[];
 }
 
 const userSchema = new mongoose.Schema({
@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    courses: [{
+    quizzes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
+        ref: 'Quiz',
     }],
 });
 

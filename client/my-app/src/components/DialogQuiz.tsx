@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Dialog, IconButton } from '@mui/material'
-import { ICourse } from '../models/user'
+import { IQuiz } from '../models/user'
 import '../styles/dashboard.css'
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
@@ -8,10 +8,10 @@ import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutl
 interface IDialogQuiz {
     openDialog: boolean,
     handleClose: () => void,
-    course: ICourse | null
+    quiz: IQuiz | null
 }
 
-export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, course }) => {
+export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, quiz }) => {
     const [isFlipped, setIsFlipped] = useState<boolean>(false);
     const [index, setIndex] = useState<number>(1);
 
@@ -26,7 +26,7 @@ export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, cou
     }
 
     return (
-        (course && course?.quiz.length > 0) ?
+        (quiz && quiz?.quiz.length > 0) ?
             <Dialog
                 open={openDialog}
                 fullScreen
@@ -43,13 +43,13 @@ export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, cou
                     setIndex(1); setIsFlipped(false); handleClose()
                 }}>
                     <div className={`card ${isFlipped ? 'is-flipped' : ''}`} onClick={(e) => { e.stopPropagation(); setIsFlipped(!isFlipped); }}>
-                        <h3 className={`course-name-dialog ${isFlipped ? 'is-unflipped' : ''}`}>{course.name}</h3>
+                        <h3 className={`quiz-name-dialog ${isFlipped ? 'is-unflipped' : ''}`}>{quiz.name}</h3>
                         <div className="card-face front">
-                            {course.quiz[index - 1].question}
+                            {quiz.quiz[index - 1].question}
                             <p className='card-text-info'>Click to reveal answer</p>
                         </div>
                         <div className="card-face back">
-                            {course.quiz[index - 1].answer}
+                            {quiz.quiz[index - 1].answer}
                             <p className='card-text-info'>Click to show question</p>
                         </div>
                     </div>
@@ -57,8 +57,8 @@ export const DialogQuiz: React.FC<IDialogQuiz> = ({ openDialog, handleClose, cou
                         <IconButton disabled={index === 1} onClick={(e) => updateIndex(e, -1)}>
                             <ArrowBackIosNewOutlinedIcon />
                         </IconButton>
-                        <p className="quiz-navigation-text">{index}/{course.quiz.length}</p>
-                        <IconButton disabled={index === course.quiz.length} onClick={(e) => updateIndex(e, 1)}>
+                        <p className="quiz-navigation-text">{index}/{quiz.quiz.length}</p>
+                        <IconButton disabled={index === quiz.quiz.length} onClick={(e) => updateIndex(e, 1)}>
                             <ArrowForwardIosOutlinedIcon />
                         </IconButton>
                     </div>

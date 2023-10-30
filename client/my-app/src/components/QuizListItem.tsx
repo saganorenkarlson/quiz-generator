@@ -7,17 +7,17 @@ import { IQuizItem } from '../models/user';
 
 interface IQuizListItem {
   quizitem: IQuizItem,
-  courseId: string,
-  editQuestion: (quizItem: IQuizItem, courseId: string, question: string, answer: string) => void
-  deleteQuestion: (quizItem: IQuizItem, courseId: string) => void
+  quizId: string,
+  editQuestion: (quizItem: IQuizItem, quizId: string, question: string, answer: string) => void
+  deleteQuestion: (quizItem: IQuizItem, quizId: string) => void
 }
 
-export const QuizListItem: React.FC<IQuizListItem> = ({ quizitem, editQuestion, deleteQuestion, courseId }) => {
+export const QuizListItem: React.FC<IQuizListItem> = ({ quizitem, editQuestion, deleteQuestion, quizId }) => {
   const [openDialogEdit, setOpenDialogEdit] = useState<boolean>(false);
   const [openDialogDelete, setOpenDialogDelete] = useState<boolean>(false);
 
   const handleSubmit = (question: string, answer: string) => {
-    editQuestion(quizitem, courseId, question, answer);
+    editQuestion(quizitem, quizId, question, answer);
   }
 
   return (
@@ -38,15 +38,15 @@ export const QuizListItem: React.FC<IQuizListItem> = ({ quizitem, editQuestion, 
         maxWidth="sm"
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description">
-        <div className='course-dialog'>
-          <div id="delete-dialog-title" className="course-dialog-title">
+        <div className='quiz-dialog'>
+          <div id="delete-dialog-title" className="quiz-dialog-title">
             Delete quiz item
           </div>
           <p id="delete-dialog-description">Are you sure you want to delete this quiz item?</p>
-          <div className='course-dialog-content'>
+          <div className='quiz-dialog-content'>
             <DialogActions>
               <Button onClick={() => setOpenDialogDelete(false)}>No</Button>
-              <Button onClick={() => { deleteQuestion(quizitem, courseId); setOpenDialogDelete(false); }}>Yes</Button>
+              <Button onClick={() => { deleteQuestion(quizitem, quizId); setOpenDialogDelete(false); }}>Yes</Button>
             </DialogActions>
           </div>
         </div>
