@@ -56,41 +56,48 @@ export const QuizList: React.FC<IQuizList> = ({ generateQuestions, editQuestion,
 
                 </AccordionSummary>
                 <AccordionDetails sx={{ padding: '0 0 16px 0', backgroundColor: '#F8F9FB' }}>
-                    <p className='quiz-settings-text'>Settings</p>
-                    <div className='quiz-settings'>
-                        <div className="visibility-wrapper">
-                            <p className="quiz-setting-visibility-text">Visibility: </p> <ToggleButtonGroup
-                                className='visibility-button'
-                                aria-label="Change quiz visibility"
-                                value={quiz.public ? 'public' : 'private'}
-                                exclusive
-                                onChange={(_event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => handlePublicValueChange(_event, value, quiz._id)}
-                                size='small'
-                            >
-                                <ToggleButton value="private" aria-pressed={quiz.public === false}>
-                                    Private
-                                </ToggleButton>
-                                <ToggleButton value="public" aria-pressed={quiz.public === true}>
-                                    Public
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </div>
-                        <IconButton aria-label="Delete quiz" onClick={() => quiz.createdBy.id === userId ? deleteQuiz(quiz._id) : removeQuizFromList(quiz._id)} className="delete-button" sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '28px' }}>
-                            {quiz.createdBy.id === userId ? <> <Delete sx={{ width: '1rem', height: '1rem' }} /> <span className="delete-button-text">DELETE QUIZ </span>  </> : <><PlaylistRemove /> <span className="delete-button-text">REMOVE FROM LIST</span> </>}
-                        </IconButton>
-                    </div>
-                    <hr className='quiz-hr' />
-                    <div className='quiz-header'>
-                        <p className='quiz-text'>Questions</p>
-                        <Tooltip title="Generate more questions">
-                            <IconButton aria-label="Generate more questions for the quiz" onClick={() => { setOpenDialogGenerate(true); setSelectedQuiz(quiz) }}>
-                                <AddCircleIcon></AddCircleIcon>
+                    {quiz.createdBy.id === userId ? <> <p className='quiz-settings-text'>Settings</p>
+                        <div className='quiz-settings'>
+                            <div className="visibility-wrapper">
+                                <p className="quiz-setting-visibility-text">Visibility: </p> <ToggleButtonGroup
+                                    className='visibility-button'
+                                    aria-label="Change quiz visibility"
+                                    value={quiz.public ? 'public' : 'private'}
+                                    exclusive
+                                    onChange={(_event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => handlePublicValueChange(_event, value, quiz._id)}
+                                    size='small'
+                                >
+                                    <ToggleButton value="private" aria-pressed={quiz.public === false}>
+                                        Private
+                                    </ToggleButton>
+                                    <ToggleButton value="public" aria-pressed={quiz.public === true}>
+                                        Public
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </div>
+                            <IconButton aria-label="Delete quiz" onClick={() => deleteQuiz(quiz._id)} className="delete-button" sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '28px' }}>
+                                <Delete sx={{ width: '1rem', height: '1rem' }} /> <span className="delete-button-text">DELETE QUIZ </span>
                             </IconButton>
-                        </Tooltip>
-                    </div>
-                    {quiz.quiz.map((quizitem) => (
-                        <QuizListItem key={quizitem._id} quizitem={quizitem} quizId={quiz._id} editQuestion={editQuestion} deleteQuestion={deleteQuestion} />
-                    ))}
+                        </div>
+                        <hr className='quiz-hr' />
+                        <div className='quiz-header'>
+                            <p className='quiz-text'>Questions</p>
+                            <Tooltip title="Generate more questions">
+                                <IconButton aria-label="Generate more questions for the quiz" onClick={() => { setOpenDialogGenerate(true); setSelectedQuiz(quiz) }}>
+                                    <AddCircleIcon></AddCircleIcon>
+                                </IconButton>
+                            </Tooltip>
+                        </div>
+                        {quiz.quiz.map((quizitem) => (
+                            <QuizListItem key={quizitem._id} quizitem={quizitem} quizId={quiz._id} editQuestion={editQuestion} deleteQuestion={deleteQuestion} />
+                        ))} </> :
+                        <div className='quiz-settings-hidden'>
+                            <IconButton aria-label="Delete quiz" onClick={() => removeQuizFromList(quiz._id)} className="delete-button" sx={{ backgroundColor: 'none', borderRadius: '4px', border: 'solid #e1e4e9 1px', height: '28px' }}>
+                                <PlaylistRemove sx={{ width: '1rem', height: '1rem' }} /> <span className="delete-button-text">REMOVE QUIZ </span>
+                            </IconButton>
+                        </div>
+                    }
+
                 </AccordionDetails>
             </Accordion>))}
             <DialogQuiz quiz={currentQuiz} openDialog={openDialogQuiz} handleClose={() => setOpenDialogQuiz(false)} />

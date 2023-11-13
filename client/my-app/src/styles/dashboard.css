@@ -244,6 +244,11 @@
   gap: 1rem;
 }
 
+.quiz-settings-hidden {
+  padding: 0.8rem;
+  padding-bottom: 0;
+}
+
 .quiz-settings-text {
   font-weight: 500;
   padding: 1rem 0.8rem;

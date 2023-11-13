@@ -19,13 +19,9 @@
   padding: 0 1rem;
 }
 
-.navbar-loading-skeleton {
-  /* margin: 0 12px; */
-}
-
 .navbar-title {
   cursor: pointer;
-  margin-right: 4px;
+  margin: 4px;
 }
 
 .navbar-option-text {
